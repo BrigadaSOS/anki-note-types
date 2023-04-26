@@ -1,5 +1,5 @@
 <!-- --------------------   BrigadaSOS Note Type   --------------------- -->
-<!--                               v0.1.3                                -->
+<!--                               v0.1.4                                -->
 <!--          Inspired on Aquafina and Animecard Note Types              -->
 <!--          Requires Yomichan Handlebars.                              -->
 <!--          See https://github.com/davafons/anki-note-types            -->
@@ -137,14 +137,14 @@
   }
 
   // ===== EXECUTION =====
-
   function execution() {
     markPitchOfVocab();
     addTagsToDiv();
     changeSentenceHintName();
   }
 
-  // On first load we must also run these functions after window.onload for the .card.style and rest of the DOM to be available
-  window.onload = execution();
+  $(document).ready(function () {
+    execution();
+  });
   execution();
 </script>
