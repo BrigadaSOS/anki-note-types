@@ -1,6 +1,6 @@
 <!-- --------------------   BrigadaSOS Note Type   --------------------- -->
-<!--                               v0.1.1                                -->
-<!--          Inspired on Aquafina and Animecard Note Types              -->
+<!--                               v0.1.2                                -->
+<!--          Inspired on Aquafina and Animecard Note Types               -->
 <!--          Requires Yomichan Handlebars.                              -->
 <!--          See https://github.com/davafons/anki-note-types            -->
 <!-- ------------------------------------------------------------------- -->
@@ -64,7 +64,7 @@
 
   <!-- Show Bilingual definition if field is not empty -->
   {{#Bilingual}}
-  <details id="bilingual_definition" class="definition-details">
+  <details id="bilingual_definition" class="definition definition-details">
     <summary class="definition-title">Bilingual</summary>
     <blockquote class="definition-blockquote">
       <div class="definition-text">{{Bilingual}}</div>
@@ -74,7 +74,10 @@
 
   <!-- Show primary Monolingual definition if field is not empty -->
   {{#MonolingualPrimary}}
-  <details id="monolingual_primary_definition" class="definition-details">
+  <details
+    id="monolingual_primary_definition"
+    class="definition definition-details"
+  >
     <summary class="definition-title">Monolingual</summary>
     <blockquote class="definition-blockquote">
       <div class="definition-text">
@@ -91,7 +94,10 @@
 
   <!-- Extra monolingual definitions -->
   {{#MonolingualExtra}}
-  <details id="monolingual_extra_definition" class="definition-details">
+  <details
+    id="monolingual_extra_definition"
+    class="definition definition-details"
+  >
     <summary class="definition-title">Extra definitions</summary>
     <blockquote class="definition-blockquote">
       <div class="definition-text">
@@ -108,7 +114,7 @@
 
   <!-- Show Notes if field is not empty -->
   {{#Notes}}
-  <details id="notes" class="definition-details">
+  <details id="notes" class="notes definition-details">
     <summary class="definition-title">Notes</summary>
     <blockquote class="definition-blockquote">
       <div class="definition-text">{{Notes}}</div>
@@ -135,8 +141,11 @@
   }
 
   // Makes sure the first definition is always open by default
-  function openFirstDefinition() {
-    document.getElementsByClassName("definition-details")[0].open = true;
+  function openDefinition(n) {
+    var definitions = document.getElementsByClassName("definition");
+    if (n < definitions.length) {
+      definitions[n].open = true;
+    }
   }
 
   function displayTags() {
@@ -157,5 +166,15 @@
   if (showMonolingualDefinitionFirst) {
     swapDefinitions();
   }
-  openFirstDefinition();
+  // Always make sure first definition is open
+  openDefinition(0);
+
+  if (typeof timeoutId !== "undefined") {
+    clearTimeout(timeoutId);
+  }
+  if (showSecondDefinitionDelay >= 0) {
+    var timeoutId = setTimeout(function () {
+      openDefinition(1);
+    }, showSecondDefinitionDelay * 1000);
+  }
 </script>

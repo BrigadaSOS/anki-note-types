@@ -1,17 +1,19 @@
 <!-- --------------------   BrigadaSOS Note Type   --------------------- -->
-<!--                               v0.1.1                                -->
-<!--          Inspired on Aquafina and Animecard Note Types              -->
+<!--                               v0.1.2                                -->
+<!--          Inspired on Aquafina and Animecard Note Types               -->
 <!--          Requires Yomichan Handlebars.                              -->
 <!--          See https://github.com/davafons/anki-note-types            -->
 <!-- ------------------------------------------------------------------- -->
 
-<!-- Opciones de la plantilla -->
+<!-- Template options -->
 <script>
-  // Cambia el color del kanji dependiendo del Pitch Accent (true/false)
+  // Change color of the vocab field depending on Pitch Accent (true/false)
   var pitchAccentColoring = true;
-  // Muestra primero la definición monolingue (true/false)
+
+  // Show monolingual definition first (true/false)
   var showMonolingualDefinitionFirst = false;
-  // Muestra la segunda definición automáticamente después de X segundos (-1 desactiva la funcionalidad)
+
+  // Show the second definition automatically after X seconds (-1 disables the option)
   var showSecondDefinitionDelay = -1;
 </script>
 
@@ -68,7 +70,12 @@
 
   function changeHighlightColor(color) {
     var r = document.querySelector(".card");
-    if (r !== undefined) {
+    if (
+      r !== null &&
+      r !== undefined &&
+      r.style !== null &&
+      r.style !== undefined
+    ) {
       r.style.setProperty("--highlight-color", color);
     }
   }
@@ -125,7 +132,19 @@
     }
   }
 
+  function changeSentenceHintName() {
+    document.querySelector("#sentence_field .hint").text = "Sentence";
+  }
+
   // ===== EXECUTION =====
-  markPitchOfVocab();
-  addTagsToDiv();
+
+  function execution() {
+    markPitchOfVocab();
+    addTagsToDiv();
+    changeSentenceHintName();
+  }
+
+  // On first load we must also run these functions after window.onload for the .card.style and rest of the DOM to be available
+  window.onload = execution();
+  execution();
 </script>

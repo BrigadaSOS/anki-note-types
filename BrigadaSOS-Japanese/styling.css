@@ -1,7 +1,7 @@
 @charset "utf-8";
 /* --------------------   BrigadaSOS Note Type   --------------------- */
-/*                               v0.1.1                                */
-/*          Inspired on Aquafina and Animecard Note Types              */
+/*                               v0.1.2                                */
+/*          Inspired on Aquafina and Animecard Note Types               */
 /*          Requires Yomichan Handlebars.                              */
 /*          See https://github.com/davafons/anki-note-types            */
 /* ------------------------------------------------------------------- */
@@ -94,15 +94,21 @@ rt {
   line-height: 1;
 }
 
-#front ruby rt {
+#front #vocab_field ruby rt {
+  visibility: hidden;
+  font-size: 40%;
+}
+
+#front_on_back #vocab_field ruby rt {
+  visibility: visible;
+  font-size: 40%;
+}
+
+#front #sentence_field ruby rt {
   visibility: hidden;
 }
 
 #front_on_back #sentence_field:hover ruby rt {
-  visibility: visible;
-}
-
-#front_on_back #vocab_field ruby rt {
   visibility: visible;
 }
 
@@ -119,11 +125,14 @@ rt {
 
 /* Fields */
 
-.sentence-field {
+#sentence_field {
   font-size: 120%;
 }
+#sentence_field a {
+  color: var(--muted-color);
+}
 
-.vocab-field {
+#vocab_field {
   font-size: 300%;
   color: var(--highlight-color);
 }
@@ -133,6 +142,10 @@ rt {
 #tags_list {
   text-align: left;
   margin-bottom: 10px;
+}
+
+#tags_list:empty {
+  margin-bottom: 38px;
 }
 
 .tag {
@@ -206,7 +219,6 @@ rt {
 .links-container a:after {
   content: " | ";
 }
-
 .links-container a:last-child:after {
   content: "";
 }
@@ -226,7 +238,7 @@ details[open] .definition-title {
 }
 
 .definition-title {
-  font-size: 80%;
+  font-size: 70%;
 }
 
 .definition-text {
