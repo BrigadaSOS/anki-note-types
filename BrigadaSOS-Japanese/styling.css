@@ -1,0 +1,312 @@
+@charset "utf-8";
+/* --------------------   BrigadaSOS Note Type   --------------------- */
+/*                               v0.1.0                                */
+/*          Inspired on Aquafina and Animecard Note Types              */
+/*          Requires Yomichan Handlebars.                              */
+/*          See https://github.com/davafons/anki-note-types            */
+/* ------------------------------------------------------------------- */
+
+/* -- General template configuration -- */
+.card {
+  --info-container-height: 140px;
+  --link-color: #bfdbfe;
+  --text-color: #404040;
+  --highlight-color: #8e72ca;
+  --muted-color: #cccccc;
+  --tag-color: #f2f2f2;
+  --tag-background-color: #404040;
+  --tag-muted-background-color: #f2f2f2;
+  --background-variant-color: #f5f5f4;
+
+  color: var(--text-color);
+  padding: 5px;
+  overflow-y: scroll;
+  text-align: center;
+  font-size: 20px;
+  max-width: 900px;
+  margin: auto;
+  background-color: var(--background-color);
+  font-family: "MS UI Gothic", "Noto Sans CJK JP", "ヒラギノ角ゴ Pro W3",
+    "Hiragino Kaku Gothic Pro", Osaka, メイリオ, Meiryo, "ＭＳ Ｐゴシック",
+    "MS PGothic", "ＭＳ ゴシック", "MS Gothic", TakaoPGothic, sans-serif;
+}
+
+.card.nightMode {
+  --link-color: #bfdbfe;
+  --text-color: #e6e6e6;
+  --highlight-color: #8e72ca;
+  --muted-color: #605e52;
+  --tag-color: #262626;
+  --tag-background-color: #f0f0f0;
+  --tag-muted-background-color: #2f2e31;
+  --background-variant-color: #2f2f2f;
+}
+
+/* > Ankidroid uses black background as default. Preserve that */
+.mobile .card.nightMode {
+  --tag-muted-background-color: #0c0e0c;
+  --background-variant-color: #0c0e0c;
+}
+
+.mobile .card.nightMode.ankidroid_dark_mode {
+  --tag-muted-background-color: #333333;
+  --background-variant-color: #333333;
+}
+
+a {
+  text-decoration: none !important;
+  color: var(--link-color);
+}
+
+b,
+strong {
+  color: var(--highlight-color);
+  font-weight: normal;
+}
+
+img {
+  border-radius: 5px;
+  max-height: var(--info-container-height);
+}
+
+hr {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--highlight-color);
+  margin: 10px 0px 20px 0px;
+}
+
+/* -- END General template configuration -- */
+
+/* -- Furigana -- */
+
+ruby {
+  display: inline-flex;
+  flex-direction: column-reverse;
+}
+
+rb,
+rt {
+  display: inline;
+  line-height: 1;
+}
+
+#front ruby rt {
+  visibility: hidden;
+}
+
+#front_on_back #sentence_field:hover ruby rt {
+  visibility: visible;
+}
+
+#front_on_back #vocab_field ruby rt {
+  visibility: visible;
+}
+
+.definition-text ruby rt {
+  visibility: hidden;
+}
+.definition-text:hover ruby rt {
+  visibility: visible;
+}
+
+/* -- END Furigana -- */
+
+/* -- Template body configuration -- */
+
+/* Fields */
+
+.sentence-field {
+  font-size: 120%;
+}
+
+.vocab-field {
+  font-size: 300%;
+  color: var(--highlight-color);
+}
+
+/* Tags */
+
+#tags_list {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.tag {
+  text-align: center;
+  font-weight: bold;
+  padding: 3px 4px 3px 4px;
+  margin-right: 5px;
+  border-radius: 4px;
+  font-size: 50%;
+  color: var(--tag-color);
+  background-color: var(--tag-background-color);
+}
+
+.tag.muted {
+  color: var(--muted-color);
+  background-color: var(--tag-muted-background-color);
+}
+
+/* Pitch accent */
+
+.pitch-accent-graph svg {
+  margin: 0;
+}
+.pitch-accent-pattern > span {
+  margin: 0 5px;
+}
+
+/* Info container */
+
+.info-container {
+  display: flex;
+  align-items: center;
+  max-height: var(--info-container-height);
+  margin-bottom: 10px;
+}
+
+.info-container-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-variant-color);
+  overflow-y: scroll;
+  padding: 10px;
+  width: 60%;
+  min-height: 40px;
+  max-height: inherit;
+}
+.info-container-left:only-child {
+  width: 100%;
+}
+.info-container-left::-webkit-scrollbar {
+  display: none;
+}
+
+.info-container-right {
+  overflow: hidden scroll;
+  width: 45%;
+  margin-left: 20px;
+  max-height: inherit;
+}
+.info-container-right::-webkit-scrollbar {
+  display: none;
+}
+
+/* Links */
+
+.links-container {
+  font-size: 70%;
+}
+
+.links-container a:after {
+  content: " | ";
+}
+
+.links-container a:last-child:after {
+  content: "";
+}
+
+/* Definitions */
+
+details[open] summary ~ * {
+  animation: sweep 0.2s ease-in-out;
+}
+
+details[open] .definition-title {
+  color: var(--highlight-color);
+}
+
+.definition-details {
+  margin-bottom: 5px;
+}
+
+.definition-title {
+  font-size: 80%;
+}
+
+.definition-text {
+  text-align: left;
+  padding: 5px 10px;
+}
+
+.definition-blockquote {
+  margin: 2px auto;
+  border-left: 3px solid var(--highlight-color);
+  background-color: var(--background-variant-color);
+}
+
+/* -- END Template body configuration -- */
+
+/* -- Utils -- */
+
+.hidden {
+  visibility: hidden;
+}
+.noDisplay {
+  display: none;
+}
+.zoom:hover {
+  transition: transform 0.2s;
+  /* Animation */
+  transform: scale(1.6);
+}
+
+@keyframes sweep {
+  0% {
+    opacity: 0;
+    margin-left: -10px;
+  }
+
+  100% {
+    opacity: 1;
+    margin-left: 0px;
+  }
+}
+
+/* -- END Utils -- */
+
+/* -- Anki specific configuration -- */
+
+/* PC audio symbol */
+.replay-button {
+  margin: -1px -12px 0 -10px;
+}
+.replay-button svg {
+  transform: scale(0.4);
+}
+
+/* Ankidroid audio symbol */
+.replaybutton {
+  text-decoration: none;
+  margin: 0 -12px 0 -10px;
+}
+
+/* -- END Anki specific configuration -- */
+
+/* -- Dictionaries definitions configuration -- */
+
+.definition-text ol {
+  margin: 0px;
+  padding-left: 20px;
+}
+
+[data-details="JMDict Extra"i] [data-sc-content="glossary"i] {
+  padding-left: 0;
+}
+
+[data-details="JMDict Extra"i] [data-sc-content="glossary"i] li {
+  display: inline;
+}
+
+[data-details="JMDict Extra"i] [data-sc-content="glossary"i] li:after {
+  content: " | ";
+}
+
+[data-details="JMDict Extra"i]
+  [data-sc-content="glossary"i]
+  li:last-child:after {
+  content: "";
+}
+
+/* -- END Dictionaries definitions configuration -- */

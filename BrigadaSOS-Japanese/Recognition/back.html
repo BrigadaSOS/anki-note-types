@@ -1,0 +1,161 @@
+<!-- --------------------   BrigadaSOS Note Type   --------------------- -->
+<!--                               v0.1.0                                -->
+<!--          Inspired on Aquafina and Animecard Note Types              -->
+<!--          Requires Yomichan Handlebars.                              -->
+<!--          See https://github.com/davafons/anki-note-types            -->
+<!-- ------------------------------------------------------------------- -->
+
+<div id="front_on_back">{{FrontSide}}</div>
+
+<hr />
+
+<div id="back">
+  <div class="info-container">
+    <div class="info-container-left">
+      <div class="info-container-wrapper">
+        <div class="pitch-accent-container">
+          <!-- Show PitchGraph if field is not empty -->
+          {{#VocabPitchGraph}}
+          <div class="pitch-accent-graph">{{VocabPitchGraph}}</div>
+          {{/VocabPitchGraph}}
+
+          <!-- Show PitchPattern if field is not empty -->
+          {{#VocabPitchPattern}}
+          <div class="pitch-accent-pattern">{{VocabPitchPattern}}</div>
+          {{/VocabPitchPattern}}
+        </div>
+
+        <div class="audio-tags-container">
+          <!-- Show VocabAudio if field is not empty -->
+          {{#VocabAudio}}
+          <span class="tag">Word: {{VocabAudio}}</span>
+          {{/VocabAudio}}
+          <!-- Show SentenceAudio if field is not empty -->
+          {{#SentenceAudio}}
+          <span class="tag">Sentence: {{SentenceAudio}}</span>
+          {{/SentenceAudio}}
+        </div>
+
+        <div class="links-container">
+          <a
+            href="https://jisho.org/search?keyword={{text:Vocab}}"
+            title="Sentence on Jisho"
+            >Jisho</a
+          >
+          <a
+            href="https://en.wiktionary.org/wiki/{{text:Vocab}}#Japanese"
+            title="Wiktionary"
+            >Wiktionary</a
+          >
+          <a
+            href="https://www.google.co.jp/search?q={{text:Vocab}}&tbm=isch"
+            title="Search images"
+            >Images</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Show Image if field is not empty -->
+    {{#Image}}
+    <div class="info-container-right zoom">{{Image}}</div>
+    {{/Image}}
+  </div>
+
+  <!-- Show Bilingual definition if field is not empty -->
+  {{#Bilingual}}
+  <details id="bilingual_definition" class="definition-details">
+    <summary class="definition-title">Bilingual</summary>
+    <blockquote class="definition-blockquote">
+      <div class="definition-text">{{Bilingual}}</div>
+    </blockquote>
+  </details>
+  {{/Bilingual}}
+
+  <!-- Show primary Monolingual definition if field is not empty -->
+  {{#MonolingualPrimary}}
+  <details id="monolingual_primary_definition" class="definition-details">
+    <summary class="definition-title">Monolingual</summary>
+    <blockquote class="definition-blockquote">
+      <div class="definition-text">
+        <!-- Try field with furigana-->
+        {{#MonolingualPrimaryFurigana}} {{furigana:MonolingualPrimaryFurigana}}
+        {{/MonolingualPrimaryFurigana}}
+        <!-- Fallback to regular field if furigana is not found-->
+        {{^MonolingualPrimaryFurigana}} {{MonolingualPrimary}}
+        {{/MonolingualPrimaryFurigana}}
+      </div>
+    </blockquote>
+  </details>
+  {{/MonolingualPrimary}}
+
+  <!-- Extra monolingual definitions -->
+  {{#MonolingualExtra}}
+  <details id="monolingual_extra_definition" class="definition-details">
+    <summary class="definition-title">Extra definitions</summary>
+    <blockquote class="definition-blockquote">
+      <div class="definition-text">
+        <!-- Try field with furigana-->
+        {{#MonolingualExtraFurigana}} {{furigana:MonolingualExtraFurigana}}
+        {{/MonolingualExtraFurigana}}
+        <!-- Fallback to regular field if furigana is not found-->
+        {{^MonolingualExtraFurigana}} {{MonolingualExtra}}
+        {{/MonolingualExtraFurigana}}
+      </div>
+    </blockquote>
+  </details>
+  {{/MonolingualExtra}}
+
+  <!-- Show Notes if field is not empty -->
+  {{#Notes}}
+  <details id="notes" class="definition-details">
+    <summary class="definition-title">Notes</summary>
+    <blockquote class="definition-blockquote">
+      <div class="definition-text">{{Notes}}</div>
+    </blockquote>
+  </details>
+  {{/Notes}}
+</div>
+
+<script>
+  // Helper function to swap two nodes on the HTML DOM
+  function swapDefinitions() {
+    function swap(node1, node2) {
+      if (!node1 || !node2) return;
+
+      const afterNode2 = node2.nextElementSibling;
+      const parent = node2.parentNode;
+      node1.replaceWith(node2);
+      parent.insertBefore(node1, afterNode2);
+    }
+    swap(
+      document.getElementById("bilingual_definition"),
+      document.getElementById("monolingual_primary_definition")
+    );
+  }
+
+  // Makes sure the first definition is always open by default
+  function openFirstDefinition() {
+    document.getElementsByClassName("definition-details")[0].open = true;
+  }
+
+  function displayTags() {
+    document.getElementById("tags_list").classList.remove("hidden");
+  }
+
+  function displayHintedSentence() {
+    var sentenceHint = document.querySelector("#sentence_field .hint");
+    if (sentenceHint !== undefined) {
+      sentenceHint.click();
+    }
+  }
+
+  // ===== EXECUTION =====
+  displayHintedSentence();
+  displayTags();
+  // Swap first and second definitions if monolingualFirst is enabled
+  if (showMonolingualDefinitionFirst) {
+    swapDefinitions();
+  }
+  openFirstDefinition();
+</script>

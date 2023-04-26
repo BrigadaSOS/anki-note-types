@@ -1,0 +1,131 @@
+<!-- --------------------   BrigadaSOS Note Type   --------------------- -->
+<!--                               v0.1.0                                -->
+<!--          Inspired on Aquafina and Animecard Note Types              -->
+<!--          Requires Yomichan Handlebars.                              -->
+<!--          See https://github.com/davafons/anki-note-types            -->
+<!-- ------------------------------------------------------------------- -->
+
+<!-- Opciones de la plantilla -->
+<script>
+  // Cambia el color del kanji dependiendo del Pitch Accent (true/false)
+  var pitchAccentColoring = true;
+  // Muestra primero la definición monolingue (true/false)
+  var showMonolingualDefinitionFirst = false;
+  // Muestra la segunda definición automáticamente después de X segundos (-1 desactiva la funcionalidad)
+  var showSecondDefinitionDelay = -1;
+</script>
+
+<div id="front">
+  <div id="tags_list" class="tags-list hidden"></div>
+  <div id="vocab_field" class="vocab-field" lang="ja">
+    <!-- Try field with furigana-->
+    {{#VocabFurigana}}{{furigana::VocabFurigana}}{{/VocabFurigana}}
+    <!-- Fallback to regular field if furigana is not found-->
+    {{^VocabFurigana}}{{Vocab}}{{/VocabFurigana}}
+  </div>
+  {{#Sentence}}
+  <div id="sentence_field" class="sentence-field" lang="ja">
+    <!-- Try field with furigana-->
+    {{#SentenceFurigana}}{{hint::furigana::SentenceFurigana}}{{/SentenceFurigana}}
+    <!-- Fallback to regular field if furigana is not found-->
+    {{^SentenceFurigana}}{{hint::Sentence}}{{/SentenceFurigana}}
+  </div>
+  {{/Sentence}}
+</div>
+
+<script>
+  // Paints the vocab word according to its Pitch Accent number.
+  function markPitchOfVocab() {
+    // Reset to standard color
+    changeHighlightColor("#649ed8");
+    if (!pitchAccentColoring) return;
+
+    let pitchNumber = `{{VocabPitchNum}}`.trim();
+    if (pitchNumber === null || pitchNumber === "") return;
+    pitchNumber = pitchNumber.match(/\d/)[0];
+    if (pitchNumber === null || pitchNumber === "") return;
+
+    switch (Number(pitchNumber)) {
+      case 0:
+        // Heiban (blue)
+        changeHighlightColor("#2e81b8");
+        break;
+      case 1:
+        // Atamadaka (red)
+        changeHighlightColor("#b8502e");
+        break;
+      default:
+        if (odaka(pitchNumber)) {
+          // Odaka (orange)
+          changeHighlightColor("#2eb867");
+        } else {
+          // Odaka (green)
+          changeHighlightColor("#b8732e");
+        }
+        break;
+    }
+  }
+
+  function changeHighlightColor(color) {
+    var r = document.querySelector(".card");
+    if (r !== undefined) {
+      r.style.setProperty("--highlight-color", color);
+    }
+  }
+
+  function odaka(pitch_num) {
+    // word is odaka if number of moras is equal to pitch accent position
+    const vocab_kana = `{{kana:VocabFurigana}}`;
+    if (vocab_kana === null) {
+      return false;
+    }
+    // small っ is one mora; ゃゅょ are parts of single mora
+    const n_moras = vocab_kana.replace(/[ャュョゃゅょ]/g, "").length;
+    if (n_moras == pitch_num) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /* Splits tags into separate divs */
+  function addTagsToDiv() {
+    const tagsList = document.getElementById("tags_list");
+
+    if (!tagsList) return;
+    tagsList.innerHTML = "";
+
+    // First, add tags defined on the Tags field
+    const split = `{{Tags}}`.split(" ");
+    for (const tag of split) {
+      if (tag.length < 1) continue;
+      const tag_elem = document.createElement("span");
+      tag_elem.className = "tag muted";
+      tag_elem.innerHTML = tag;
+      tagsList.appendChild(tag_elem);
+    }
+
+    // Now add new tags for each frequency defined on the Frequencies field
+    var template = document.createElement("template");
+    template.innerHTML = `{{Frequencies}}`.trim();
+    var frequencies = template.content;
+    var frequencyDicts = frequencies.querySelectorAll(".frequencies__group");
+
+    for (var freqDict of frequencyDicts) {
+      var number = freqDict.querySelector(
+        ".frequencies__number-inner"
+      ).innerHTML;
+      var name = freqDict.querySelector(
+        ".frequencies__dictionary-inner"
+      ).innerHTML;
+      const tag_elem = document.createElement("span");
+      tag_elem.className = "tag muted";
+      tag_elem.innerHTML = `${name}: ${number}`;
+      tagsList.appendChild(tag_elem);
+    }
+  }
+
+  // ===== EXECUTION =====
+  markPitchOfVocab();
+  addTagsToDiv();
+</script>

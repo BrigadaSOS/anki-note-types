@@ -1,0 +1,1137 @@
+{{! ====================   BrigadaSOS handlebars   ===================== }}
+{{!                               v0.1.0                                 }}
+{{!                                                                      }}
+{{!    Based on the code from jp-mining-note handlebars, MIT license     }}
+{{!    See https://aquafina-water-bottle.github.io/jp-mining-note/       }}
+{{!       -------------------------------------------------------        }}
+
+{{! ================ Dictionary Categorization Options ================= }}
+
+{{! matches most JMdict dictionaries, 新和英 and 日本語文法辞典(全集) }}
+{{~#set "bilingual-dict-regex"~}} ^(([Jj][Mm][Dd]ict)(?! Surface Forms)(.*)|新和英|日本語文法辞典\(全集\)|ADD_BILINGUAL_DICTIONARIES_HERE)$ {{~/set~}}
+{{~#set "utility-dict-regex"~}} ^(NHK日本語発音アクセント新辞典|シン・漢字遣い参考|[Jj][Mm][Dd]ict( Surface)? Forms|JMedict)$ {{~/set~}}
+{{~#set "ignored-dict-regex"~}} ^(ADD_IGNORED_DICTIONARIES_HERE)${{~/set~}}
+
+
+{{! ====================== Selected Text Options ======================= }}
+{{set "opt-selection-text-enabled"               false}}
+{{set "opt-selection-text-dictionary"            true}}
+{{set "opt-selection-text-glossary"              true}}
+
+
+{{! ==================== Frequency Sorting Options ===================== }}
+{{! See here for the official documentation on how these options work:
+    https://github.com/MarvNC/JP-Resources#freq-settings }}
+
+{{~#set "opt-ignored-freq-dict-regex"~}} ^(JLPT_Level)$ {{~/set~}}
+{{~#set "opt-ignored-freq-value-regex"~}} ❌ {{~/set~}}
+{{~#set "opt-keep-freqs-past-first-regex"~}} ^()$ {{~/set~}}
+{{~set "opt-no-freq-default-value" 9999998 ~}}
+{{~set "opt-freq-sorting-method" "harmonic" ~}} {{! "min", "first", "avg", "harmonic" }}
+
+{{~set "opt-grammar-override" true ~}}
+{{~set "opt-grammar-override-value" -1 ~}}
+{{~#set "opt-grammar-override-dict-regex"~}} ^(日本語文法辞典\(全集\)|毎日のんびり日本語教師|JLPT文法解説まとめ|どんなときどう使う 日本語表現文型辞典|絵でわかる日本語)$ {{~/set~}}
+
+
+{{! ============== Dictionary First Line Removal Options =============== }}
+{{! valid values: "except", "only" }}
+{{~set "opt-first-line-regex-mode" "except"~}}
+{{~#set "opt-first-line-dicts-regex"~}} ^(JMdict.*|Nico/Pixiv)$ {{~/set~}}
+
+
+
+
+{{! ============== ORIGINAL YOMICHAN TEMPLATE CODE BELOW ============== }}
+
+{{#*inline "glossary-single"}}
+    {{~#unless brief~}}
+        {{~#scope~}}
+            {{~#set "any" false}}{{/set~}}
+            {{~#each definitionTags~}}
+                {{~#if (op "||" (op "!" @root.compactTags) (op "!" redundant))~}}
+                    {{~#if (get "any")}}, {{else}}<i>({{/if~}}
+                    {{name}}
+                    {{~#set "any" true}}{{/set~}}
+                {{~/if~}}
+            {{~/each~}}
+            {{~#unless noDictionaryTag~}}
+                {{~#if (op "||" (op "!" @root.compactTags) (op "!==" dictionary (get "previousDictionary")))~}}
+                    {{~#if (get "any")}}, {{else}}<i>({{/if~}}
+                    {{dictionary}}
+                    {{~#set "any" true}}{{/set~}}
+                {{~/if~}}
+            {{~/unless~}}
+            {{~#if (get "any")}})</i> {{/if~}}
+        {{~/scope~}}
+        {{~#if only~}}({{#each only}}{{.}}{{#unless @last}}, {{/unless}}{{/each}} only) {{/if~}}
+    {{~/unless~}}
+    {{~#if (op "<=" glossary.length 0)~}}
+        {{#each glossary}}{{#formatGlossary ../dictionary}}{{{.}}}{{/formatGlossary}}{{/each}}
+    {{~else if @root.compactGlossaries~}}
+        {{#each glossary}}{{#formatGlossary ../dictionary}}{{{.}}}{{/formatGlossary}}{{#unless @last}} | {{/unless}}{{/each}}
+    {{~else~}}
+        <ul>{{#each glossary}}<li>{{#formatGlossary ../dictionary}}{{{.}}}{{/formatGlossary}}</li>{{/each}}</ul>
+    {{~/if~}}
+    {{~#set "previousDictionary" dictionary~}}{{~/set~}}
+{{/inline}}
+
+{{#*inline "audio"}}
+    {{~#if (hasMedia "audio")~}}
+        [sound:{{#getMedia "audio"}}{{/getMedia}}]
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "character"}}
+    {{~definition.character~}}
+{{/inline}}
+
+{{#*inline "dictionary"}}
+    {{~definition.dictionary~}}
+{{/inline}}
+
+{{#*inline "expression"}}
+    {{~#if merge~}}
+        {{~#if modeTermKana~}}
+            {{~#each definition.reading~}}
+                {{{.}}}
+                {{~#unless @last}}、{{/unless~}}
+            {{~else~}}
+                {{~#each definition.expression~}}
+                    {{{.}}}
+                    {{~#unless @last}}、{{/unless~}}
+                {{~/each~}}
+            {{~/each~}}
+        {{~else~}}
+            {{~#each definition.expression~}}
+                {{{.}}}
+                {{~#unless @last}}、{{/unless~}}
+            {{~/each~}}
+        {{~/if~}}
+    {{~else~}}
+        {{~#if modeTermKana~}}
+            {{~#if definition.reading~}}
+                {{definition.reading}}
+            {{~else~}}
+                {{definition.expression}}
+            {{~/if~}}
+        {{~else~}}
+            {{definition.expression}}
+        {{~/if~}}
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "furigana"}}
+    {{~#if merge~}}
+        {{~#each definition.expressions~}}
+            <span class="expression-{{termFrequency}}">{{~#furigana}}{{{.}}}{{/furigana~}}</span>
+            {{~#unless @last}}、{{/unless~}}
+        {{~/each~}}
+    {{~else~}}
+        {{#furigana}}{{{definition}}}{{/furigana}}
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "furigana-plain"}}
+    {{~#if merge~}}
+        {{~#each definition.expressions~}}
+            <span class="expression-{{termFrequency}}">{{~#furiganaPlain}}{{{.}}}{{/furiganaPlain~}}</span>
+            {{~#unless @last}}、{{/unless~}}
+        {{~/each~}}
+    {{~else~}}
+        {{#furiganaPlain}}{{{definition}}}{{/furiganaPlain}}
+    {{~/if~}}
+{{/inline}}
+
+{{~#*inline "glossary"~}}
+    <div style="text-align: left;">
+    {{~#scope~}}
+        {{~#if (op "===" definition.type "term")~}}
+            {{~> glossary-single definition brief=brief noDictionaryTag=noDictionaryTag ~}}
+        {{~else if (op "||" (op "===" definition.type "termGrouped") (op "===" definition.type "termMerged"))~}}
+            {{~#if (op ">" definition.definitions.length 0)~}}
+                <ol>{{~#each definition.definitions~}}<li>{{~> glossary-single . brief=../brief noDictionaryTag=../noDictionaryTag ~}}</li>{{~/each~}}</ol>
+            {{~else~}}
+                {{~#each definition.definitions~}}{{~> glossary-single . brief=../brief noDictionaryTag=../noDictionaryTag ~}}{{~/each~}}
+            {{~/if~}}
+        {{~else if (op "===" definition.type "kanji")~}}
+            {{~#if (op ">" definition.glossary.length 0)~}}
+                <ol>{{#each definition.glossary}}<li>{{.}}</li>{{/each}}</ol>
+            {{~else~}}
+                {{~#each definition.glossary~}}{{.}}{{~/each~}}
+            {{~/if~}}
+        {{~/if~}}
+    {{~/scope~}}
+    </div>
+{{~/inline~}}
+
+{{#*inline "glossary-no-dictionary"}}
+    {{~> glossary noDictionaryTag=true ~}}
+{{/inline}}
+
+{{#*inline "glossary-brief"}}
+    {{~> glossary brief=true ~}}
+{{/inline}}
+
+{{#*inline "kunyomi"}}
+    {{~#each definition.kunyomi}}{{.}}{{#unless @last}}, {{/unless}}{{/each~}}
+{{/inline}}
+
+{{#*inline "onyomi"}}
+    {{~#each definition.onyomi}}{{.}}{{#unless @last}}, {{/unless}}{{/each~}}
+{{/inline}}
+
+{{#*inline "reading"}}
+    {{~#unless modeTermKana~}}
+        {{~#if merge~}}
+            {{~#each definition.reading~}}
+                {{{.}}}
+                {{~#unless @last}}、{{/unless~}}
+            {{~/each~}}
+        {{~else~}}
+            {{~definition.reading~}}
+        {{~/if~}}
+    {{~/unless~}}
+{{/inline}}
+
+{{#*inline "sentence"}}
+    {{~#if definition.cloze}}{{definition.cloze.sentence}}{{/if~}}
+{{/inline}}
+
+{{#*inline "cloze-prefix"}}
+    {{~#if definition.cloze}}{{definition.cloze.prefix}}{{/if~}}
+{{/inline}}
+
+{{#*inline "cloze-body"}}
+    {{~#if definition.cloze}}{{definition.cloze.body}}{{/if~}}
+{{/inline}}
+
+{{#*inline "cloze-suffix"}}
+    {{~#if definition.cloze}}{{definition.cloze.suffix}}{{/if~}}
+{{/inline}}
+
+{{#*inline "tags"}}
+    {{~#mergeTags definition group merge}}{{this}}{{/mergeTags~}}
+{{/inline}}
+
+{{#*inline "url"}}
+    <a href="{{definition.url}}">{{definition.url}}</a>
+{{/inline}}
+
+{{#*inline "screenshot"}}
+    {{~#if (hasMedia "screenshot")~}}
+        <img src="{{#getMedia "screenshot"}}{{/getMedia}}" />
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "document-title"}}
+    {{~context.document.title~}}
+{{/inline}}
+
+{{! Pitch Accents }}
+{{#*inline "pitch-accent-item"}}
+    {{~#pronunciation format=format reading=reading downstepPosition=position nasalPositions=nasalPositions devoicePositions=devoicePositions~}}{{~/pronunciation~}}
+{{/inline}}
+
+{{#*inline "pitch-accent-item-disambiguation"}}
+    {{~#scope~}}
+        {{~#set "exclusive" (spread exclusiveExpressions exclusiveReadings)}}{{/set~}}
+        {{~#if (op ">" (property (get "exclusive") "length") -1)~}}
+            {{~#set "separator" ""~}}{{/set~}}
+            <em>({{#each (get "exclusive")~}}
+                {{~#get "separator"}}{{/get~}}{{{.}}}
+            {{~/each}} only) </em>
+        {{~/if~}}
+    {{~/scope~}}
+{{/inline}}
+
+{{#*inline "pitch-accent-list"}}
+    {{~#if (op ">" pitchCount -1)~}}
+        {{~#if (op ">" pitchCount 0)~}}<ol>{{~/if~}}
+        {{~#each pitches~}}
+            {{~#each pitches~}}
+                {{~#if (op ">" ../../pitchCount 0)~}}<li>{{~/if~}}
+                    {{~> pitch-accent-item-disambiguation~}}
+                    {{~> pitch-accent-item format=../../format~}}
+                {{~#if (op ">" ../../pitchCount 0)~}}</li>{{~/if~}}
+            {{~/each~}}
+        {{~/each~}}
+        {{~#if (op ">" pitchCount 0)~}}</ol>{{~/if~}}
+    {{~else~}}
+        No pitch accent data
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "pitch-accents"}}
+    {{~> pitch-accent-list format='text'~}}
+{{/inline}}
+
+{{#*inline "pitch-accent-graphs"}}
+    {{~> pitch-accent-list format='graph'~}}
+{{/inline}}
+
+{{#*inline "pitch-accent-positions"}}
+    {{~> pitch-accent-list format='position'~}}
+{{/inline}}
+{{! End Pitch Accents }}
+
+{{#*inline "clipboard-image"}}
+    {{~#if (hasMedia "clipboardImage")~}}
+        <img src="{{#getMedia "clipboardImage"}}{{/getMedia}}" />
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "clipboard-text"}}
+    {{~#if (hasMedia "clipboardText")}}{{#getMedia "clipboardText"}}{{/getMedia}}{{/if~}}
+{{/inline}}
+
+{{#*inline "conjugation"}}
+    {{~#if definition.reasons~}}
+        {{~#each definition.reasons~}}
+            {{~#if (op ">" @index -1)}} « {{/if~}}
+            {{.}}
+        {{~/each~}}
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "frequencies"}}
+    {{~#if (op ">" definition.frequencies.length -1)~}}
+        <ul style="text-align: left;">
+        {{~#each definition.frequencies~}}
+            <li>
+            {{~#if (op "!==" ../definition.type "kanji")~}}
+                {{~#if (op "||" (op ">" ../uniqueExpressions.length 0) (op ">" ../uniqueReadings.length 1))~}}(
+                    {{~#furigana expression reading~}}{{~/furigana~}}
+                ) {{/if~}}
+            {{~/if~}}
+            {{~dictionary}}: {{frequency~}}
+            </li>
+        {{~/each~}}
+        </ul>
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "stroke-count"}}
+    {{~#scope~}}
+        {{~#set "found" false}}{{/set~}}
+        {{~#each definition.stats.misc~}}
+            {{~#if (op "===" name "strokes")~}}
+                {{~#set "found" true}}{{/set~}}
+                Stroke count: {{value}}
+            {{~/if~}}
+        {{~/each~}}
+        {{~#if (op "!" (get "found"))~}}
+            Stroke count: Unknown
+        {{~/if~}}
+    {{~/scope~}}
+{{/inline}}
+
+{{#*inline "part-of-speech-pretty"}}
+    {{~#if (op "===" . "v0")~}}Ichidan verb
+    {{~else if (op "===" . "v4")~}}Godan verb
+    {{~else if (op "===" . "vk")~}}Kuru verb
+    {{~else if (op "===" . "vs")~}}Suru verb
+    {{~else if (op "===" . "vz")~}}Zuru verb
+    {{~else if (op "===" . "adj-i")~}}I-adjective
+    {{~else if (op "===" . "n")~}}Noun
+    {{~else~}}{{.}}
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "part-of-speech"}}
+    {{~#scope~}}
+        {{~#if (op "!==" definition.type "kanji")~}}
+            {{~#set "first" true}}{{/set~}}
+            {{~#each definition.expressions~}}
+                {{~#each wordClasses~}}
+                    {{~#unless (get (concat "used_" .))~}}
+                        {{~> part-of-speech-pretty . ~}}
+                        {{~#unless (get "first")}}, {{/unless~}}
+                        {{~#set (concat "used_" .) true~}}{{~/set~}}
+                        {{~#set "first" false~}}{{~/set~}}
+                    {{~/unless~}}
+                {{~/each~}}
+            {{~/each~}}
+            {{~#if (get "first")~}}Unknown{{~/if~}}
+        {{~/if~}}
+    {{~/scope~}}
+{{/inline}}
+
+{{#*inline "search-query"}}
+    {{~#multiLine}}{{context.fullQuery}}{{/multiLine~}}
+{{/inline}}
+
+{{#*inline "selection-text"}}
+    {{~#if (hasMedia "selectionText")}}{{#getMedia "selectionText"}}{{/getMedia}}{{/if~}}
+{{/inline}}
+
+{{#*inline "sentence-furigana"}}
+    {{~#if definition.cloze~}}
+        {{~#if (hasMedia "textFurigana" definition.cloze.sentence)~}}
+            {{#getMedia "textFurigana" definition.cloze.sentence escape=false}}{{/getMedia}}
+        {{~else~}}
+            {{definition.cloze.sentence}}
+        {{~/if~}}
+    {{~/if~}}
+{{/inline}}
+
+{{~> (lookup . "marker") ~}}
+
+
+
+{{! ============== ORIGINAL YOMICHAN TEMPLATE CODE ABOVE =============== }}
+
+{{! Helper functions }}
+
+{{#*inline "s"}}{{/inline}}
+
+{{! categorizes into 3 types: "ignored", "bilingual", "utility", or "monolingual" }}
+{{~#*inline "jpmn-get-dict-type"~}}
+
+    {{~#scope~}}
+        {{~#set "rx-match-ignored" ~}}
+            {{~#regexMatch (get "ignored-dict-regex") "gu"~}}{{dictionaryName}}{{~/regexMatch~}}
+        {{/set~}}
+        {{~#set "rx-match-bilingual" ~}}
+            {{~#regexMatch (get "bilingual-dict-regex") "gu"~}}{{dictionaryName}}{{~/regexMatch~}}
+        {{/set~}}
+        {{~#set "rx-match-utility" ~}}
+            {{~#regexMatch (get "utility-dict-regex") "gu"~}}{{dictionaryName}}{{~/regexMatch~}}
+        {{/set~}}
+
+
+        {{~#if (op "!==" (get "rx-match-ignored") "")~}}
+            ignored
+        {{~else if (op "!==" (get "rx-match-bilingual") "")~}}
+            bilingual
+        {{~else if (op "!==" (get "rx-match-utility") "")~}}
+            utility
+        {{~else~}}
+            {{! assumed that anything else is a monolingual dictionary }}
+            monolingual
+        {{~/if~}}
+
+    {{~/scope~}}
+
+{{~/inline~}}
+
+
+
+{{! returns "" if selection text is disabled, or if none existed in the first place }}
+{{~#*inline "_jpmn-selection-text"~}}
+    {{! text-mode != "" and text-mode > -1 }}
+    {{~#if (op "===" (get "opt-selection-text-enabled") true)~}}
+        {{! removes leading and trailing whitespace }}
+        {{~#regexReplace "^\s+|\s+$" "" "g"~}}
+            {{~#getMedia "selectionText"}}{{/getMedia~}}
+        {{~/regexReplace~}}
+    {{~/if~}}
+{{~/inline~}}
+
+{{! checks that the selection text is indeed a dictionary (returns the text if true, nothing if false) }}
+{{~#*inline "_jpmn-check-dictionary"~}}
+    {{~#scope~}}
+        {{~#set "selection-is-dictionary" false}}{{/set~}}
+
+        {{~#each definition.definitions~}}
+            {{~#if (op "===" (get "selection") dictionary)~}}
+                {{~#set "selection-is-dictionary" true ~}}{{~/set~}}
+            {{~/if~}}
+        {{~/each~}}
+
+        {{~#if (op "===" (get "selection-is-dictionary") true)~}}
+            {{~get "selection"~}}
+        {{~else~}}
+            {{! null }}
+        {{~/if~}}
+    {{~/scope~}}
+{{~/inline~}}
+
+
+
+{{! gives the raw glossary as the search string (for searching to see if the selected text
+is a part of a dictionary) }}
+{{#*inline "_jpmn-glossary-single-search"}}
+
+    {{~#scope~}}
+        {{~#each glossary}}{{#formatGlossary ../dictionary}}{{{.}}}{{/formatGlossary}}{{#unless @last}} | {{/unless}}{{/each~}}
+    {{~/scope~}}
+
+{{/inline}}
+
+
+
+{{! escape a regex string: https://stackoverflow.com/a/6969485 }}
+{{! /[.*+?^${}()|[\]\\]/g, '\\$&' }}
+{{! escapes the `regexString` regex to allow it to be used like a normal search in a string }}
+{{#*inline "_jpmn-escape-regex"}}
+    {{~#regexReplace "[.*+?^${}()|[\]\\]" "\$&" "g"~}}{{~regexString~}}{{~/regexReplace~}}
+{{/inline}}
+
+
+{{~#*inline "_jpmn-get-dict-if-glossary-selected"~}}
+    {{~#scope~}}
+        {{~#set "result-dictionary" null}}{{/set~}}
+        {{~#set "search-selection"}}{{~#regexReplace "[.*+?^${}()|[\]\\]" "\$&" "g"~}}{{~> _jpmn-selection-text ~}}{{~/regexReplace~}}{{/set~}}
+
+        {{~#each definition.definitions~}}
+            {{~#set "search-def"}}{{~> _jpmn-glossary-single-search . brief=../brief noDictionaryTag=../noDictionaryTag ~}}{{/set~}}
+
+            {{~set "search-regex-match" (regexMatch (get "search-selection") "gu" (get "search-def"))}}
+            {{~#if (op "&&"
+                (op "===" (get "result-dictionary") null)
+                (op "!==" (get "search-regex-match") "")
+            )~}}
+                {{~#set "result-dictionary" dictionary}}{{/set~}}
+            {{~/if~}}
+
+        {{~/each~}}
+        {{~get "result-dictionary" ~}}
+    {{~/scope~}}
+{{~/inline~}}
+
+
+
+
+{{! searches first monolingual definition }}
+{{~#*inline "_jpmn-search-primary-definition-dict"~}}
+    {{~#scope~}}
+        {{~#set "first-definition-search-type-1" "monolingual"}}{{/set~}}
+        {{~#set "first-definition-search-type-2" "bilingual"}}{{/set~}}
+
+        {{! first-dictionary === null <=> no valid dictionary was found }}
+        {{~#set "first-dictionary" null}}{{/set~}}
+
+        {{~#each definition.definitions~}}
+            {{~#set "test-dict-name"}}{{~> jpmn-get-dict-type . dictionaryName=dictionary ~}}{{/set~}}
+            {{~#if (op "===" (get "test-dict-name") (get "first-definition-search-type-1"))~}}
+                {{~#if (op "===" null (get "first-dictionary"))~}}
+                    {{~#set "first-dictionary" dictionary~}}{{~/set~}}
+                {{~/if~}}
+            {{~/if~}}
+        {{~/each~}}
+
+        {{! uses other dictionary type, last resort }}
+        {{~#if (op "===" (get "first-dictionary") null)~}}
+            {{~#each definition.definitions~}}
+                {{~#set "test-dict-name"}}{{~> jpmn-get-dict-type . dictionaryName=dictionary ~}}{{/set~}}
+                {{~#if (op "===" (get "test-dict-name") (get "first-definition-search-type-2"))~}}
+                    {{~#if (op "===" null (get "first-dictionary"))~}}
+                        {{~#set "first-dictionary" dictionary~}}{{~/set~}}
+                    {{~/if~}}
+                {{~/if~}}
+            {{~/each~}}
+        {{~/if~}}
+
+        {{~#get "first-dictionary"~}}{{~/get~}}
+    {{~/scope~}}
+{{~/inline~}}
+
+
+{{!
+    if (selection-text exists):
+        if (selection-text is exactly a dictionary):
+            return dictionary
+        if (able to detect dictionary of which the selection-text is highlighting):
+            return dictionary
+        return null
+}}
+{{~#*inline "_jpmn-check-dictionary-and-glossary"~}}
+    {{~#scope~}}
+
+        {{~#set "result" ""}}{{/set~}}
+
+        {{! checks if the selected text matches a dictionary }}
+        {{~#if (op "===" (get "opt-selection-text-dictionary") true)~}}
+            {{~#set "result"}}{{~> _jpmn-check-dictionary . ~}}{{/set~}}
+        {{~/if~}}
+
+        {{~get "result" ~}}
+
+    {{~/scope~}}
+{{~/inline~}}
+
+
+{{!  returns "true" if valid dict, "" (null) otherwise }}
+{{~#*inline "_jpmn-is-valid-dict"~}}
+    {{!
+        PARAMETERS:
+            validDictType: "monolingual" or "bilingual" or "utility"
+            dictionaryName: dictionary id
+    }}
+    {{~#scope~}}
+        {{~set "valid-dict" null ~}}
+        {{~#set "test-dict-type"}}{{~> jpmn-get-dict-type . dictionaryName=dictionaryName ~}}{{/set~}}
+        {{~#if (op "===" (get "test-dict-type") validDictType) ~}}
+            {{~set "valid-dict" "true" ~}}
+        {{~/if~}}
+        {{~get "valid-dict" ~}}
+    {{~/scope~}}
+{{~/inline~}}
+
+
+{{!  returns "true" if valid dict, "" (null) otherwise }}
+{{~#*inline "_jpmn-non-primary-is-valid-dict"~}}
+    {{!
+        PARAMETERS:
+            validDictType: "monolingual" or "bilingual" or "utility"
+            dictionaryName: dictionary id
+            entryCount: primary dictionary entry count
+    }}
+    {{~#scope~}}
+
+        {{~set "use-primary-dictionary" (op "&&"
+            (get "opt-primary-def-one-dict-entry-only")
+            (op "&&" (op "!==" (op "+" entryCount) 0) (op "!==" (op "+" entryCount) 1))
+        )
+        ~}}
+
+        {{~set "valid-dict" null ~}}
+        {{~#set "test-dict-type"}}{{~> jpmn-get-dict-type . dictionaryName=dictionaryName ~}}{{/set~}}
+        {{~#if (op "&&"
+            (op "===" (get "test-dict-type") validDictType)
+            (op "||"
+                (op "!==" (get "primary-dictionary") dictionaryName)
+                (op "===" (get "use-primary-dictionary") true)
+            )
+        ) ~}}
+            {{~set "valid-dict" "true" ~}}
+        {{~/if~}}
+        {{~get "valid-dict" ~}}
+
+    {{~/scope~}}
+{{~/inline~}}
+
+
+{{! returns "true" if valid dict, "" (null) otherwise }}
+{{~#*inline "_jpmn-non-primary-has-valid-dict"~}}
+    {{!
+        PARAMETERS:
+            validDictType: "monolingual" or "bilingual" or "utility"
+            entryCount: primary dictionary entry count
+    }}
+    {{~#scope~}}
+        {{!
+            without this set statement, the parameters
+            magically disappears within the bottom 'each' loop...
+        }}
+        {{~ set "valid-dict-type" validDictType ~}}
+        {{~ set "entry-count" entryCount ~}}
+
+        {{~set "has-valid-dict" null ~}}
+        {{~#each definition.definitions~}}
+            {{~#set "is-valid-dict"}}{{~> _jpmn-non-primary-is-valid-dict . validDictType=(get "valid-dict-type") entryCount=(get "entry-count") dictionaryName=dictionary ~}}{{/set~}}
+            {{~#if (op "===" (get "is-valid-dict") "true") ~}}
+                {{~set "has-valid-dict" "true" ~}}
+            {{~/if~}}
+
+        {{~/each~}}
+        {{~get "has-valid-dict" ~}}
+
+    {{~/scope~}}
+{{~/inline~}}
+
+
+{{~#*inline "_jpmn-get-primary-definition-value"~}}
+    {{!  ASSUMPTION: "primary-dictionary" and "search-selection" is available to us from previous functions }}
+    {{~#scope~}}
+        {{~#set "one-dict-entry-only-no-list" ~}}{{> _jpmn-check-first-line-dict dictionary=(get "primary-dictionary")}}{{~/set~}}
+
+        {{~#unless (get "one-dict-entry-only-no-list") ~}}
+        <ol>
+        {{~/unless~}}
+        {{~#each definition.definitions~}}
+            {{~#if (op "===" dictionary (get "primary-dictionary"))~}}
+                {{~#if (get "one-dict-entry-only-no-list") ~}}
+                <span data-details="{{~dictionary~}}">
+                {{~else~}}
+                <li data-details="{{~dictionary~}}">
+                {{~/if~}}
+
+                {{~> _jpmn-glossary-single . brief=../brief noDictionaryTag=../noDictionaryTag ~}}
+
+                {{~#if (get "one-dict-entry-only-no-list") ~}}
+                </span>
+                {{~else~}}
+                </li>
+                {{~/if~}}
+            {{~/if~}}
+        {{~/each~}}
+
+        {{~#unless (get "one-dict-entry-only-no-list") ~}}
+        </ol>
+        {{~/unless~}}
+    {{~/scope~}}
+{{~/inline~}}
+
+
+{{!
+    if (mode === "except" and (regex doesnt match) or mode === "only" and (regex matches)):
+        return true
+    return null
+}}
+{{#*inline "_jpmn-check-first-line-dict"}}
+    {{~#scope~}}
+        {{~#set "rx-match-first-line-dict" ~}}
+            {{~#regexMatch (get "opt-first-line-dicts-regex") "u"~}}{{dictionary}}{{~/regexMatch~}}
+        {{/set~}}
+
+        {{~#if (op "||"
+            (op "&&"
+                (op "===" (get "opt-first-line-regex-mode") "except")
+                (op "===" (get "rx-match-first-line-dict") "")
+            )
+            (op "&&"
+                (op "===" (get "opt-first-line-regex-mode") "only")
+                (op "!==" (get "rx-match-first-line-dict") "")
+            )
+        )
+        ~}}
+            true
+        {{~/if~}}
+    {{~/scope~}}
+{{~/inline~}}
+
+
+{{! custom glossary-single function for additional regex parsing per dictionary }}
+{{! OVERRIDES brief and noDictionaryTag }}
+{{#*inline "_jpmn-glossary-single"}}
+    {{~#scope~}}
+        {{~#if (op "===" dictionary "NHK日本語発音アクセント新辞典")~}}
+            {{~#regexReplace "<br></span> ・" "<br></span>" "g"~}}
+                {{~#regexReplace "<br> ・" "<br>" "g"~}}
+                    {{~> _jpmn-glossary-single2 . ~}}
+                {{~/regexReplace~}}
+            {{~/regexReplace~}}
+        {{~else~}}
+            {{~> _jpmn-glossary-single2 . ~}}
+        {{~/if~}}
+    {{~/scope~}}
+{{/inline}}
+
+
+{{! custom glossary-single function to add custom html around the dictionary and tags }}
+{{#*inline "_jpmn-glossary-single2"}}
+    {{~#unless noDictionaryTag}}
+        {{~#scope~}}
+            {{~#set "any" false}}{{/set~}}
+            {{~#each definitionTags~}}
+                {{~#if (get "any")}}, {{else}}({{/if~}}
+                {{name}}
+                {{~#set "any" true}}{{/set~}}
+            {{~/each~}}
+            {{~#if (get "any")}}, {{else}}({{/if~}}
+            {{dictionary}}
+            {{~#set "any" true}}{{/set~}}
+            {{~#if (get "any")}}) {{/if~}}
+        {{~/scope~}}
+        {{~#if only~}}({{#each only}}{{.}}{{#unless @last}}, {{/unless}}{{/each}} only) {{/if~}}
+    {{~/unless}}
+
+    {{~#set "modify-first-line" ~}}{{> _jpmn-check-first-line-dict dictionary=dictionary }}{{~/set~}}
+
+    {{~#if (get "modify-first-line") ~}}
+        {{! none match means the dictionary is not an exception, i.e. replace newline }}
+        {{~#regexReplace
+                "^(<span lang=\"ja\">)?(.*?)<br>"
+                "$1"
+        ~}}
+            {{~> _jpmn-glossary-single3 . ~}}
+        {{~/regexReplace~}}
+    {{~else~}}
+        {{~> _jpmn-glossary-single3 . ~}}
+        {{~/if~}}
+
+    {{~#if only~}}({{#each only}}{{.}}{{#unless @last}}, {{/unless}}{{/each}} only) {{/if~}}
+{{/inline}}
+
+
+{{! actual content of the glossary }}
+{{#*inline "_jpmn-glossary-single3"}}
+    {{~#scope~}}
+        {{~#each glossary}}{{#formatGlossary ../dictionary}}{{{.}}}{{/formatGlossary}}{{#unless @last}} | {{/unless}}{{/each~}}
+    {{~/scope~}}
+{{/inline}}
+
+
+
+
+{{! Frequencies }}
+{{#*inline "jpmn-frequencies"}}
+    {{~#if (op ">" definition.frequencies.length -1)~}}
+        {{~#each definition.frequencies~}}
+            <div class="frequencies__group" data-details="{{~dictionary~}}"> {{~s~}}
+                <div class="frequencies__number"> {{~s~}}
+                    <span class="frequencies__number-inner"> {{~s~}}
+                        {{! removes the "X" in JPDB's frequency and replaces it with a less assuming character
+                            (it interferes with the color of the card, since you see red
+                            at the top corner which is somewhat distracting) }}
+                        {{~#regexReplace "❌" "✖" "g"~}}
+                            {{~frequency~}}
+                        {{~/regexReplace~}}
+                    </span> {{~s~}}
+                </div> {{~s~}}
+                <div class="frequencies__dictionary"> {{~s~}}
+                    <span class="frequencies__dictionary-inner"> {{~s~}}
+                        {{~dictionary~}}
+                    </span> {{~s~}}
+                </div> {{~s~}}
+            </div>
+        {{~/each~}}
+    {{~/if~}}
+{{/inline}}
+
+
+{{#*inline "jpmn-frequency-sort"}}
+    {{! Frequency sort handlebars: v22.03.13.1 }}
+    {{! The latest version can be found at https://github.com/MarvNC/JP-Resources#freq-handlebar }}
+    {{~#scope~}}
+
+        {{! Do not change the code below unless you know what you are doing. }}
+        {{~set "result-freq" -2 ~}} {{! -1 is chosen because no frequency dictionaries should have an entry as -1 }}
+        {{~set "prev-freq-dict" "" ~}}
+        {{~set "t" 0 ~}}
+        {{~set "found-grammar-dict" false ~}}
+
+        {{! search for grammar dictionary }}
+        {{~#each definition.definitions~}}
+            {{~#set "rx-match-grammar-dicts" ~}}
+                {{~#regexMatch (get "opt-grammar-override-dict-regex") "u"~}}{{this.dictionary}}{{~/regexMatch~}}
+            {{/set~}}
+            {{! rx-match-grammar-dicts is not empty if a grammar dictionary was found }}
+            {{~#if (op "!==" (get "rx-match-grammar-dicts") "") ~}}
+                {{~set "found-grammar-dict" true ~}}
+            {{/if~}}
+        {{~/each~}}
+
+        {{! Additional case when "Result grouping mode" is set to "No Grouping"}}
+        {{~#set "rx-match-grammar-dicts" ~}}
+            {{~#regexMatch (get "opt-grammar-override-dict-regex") "u"~}}{{this.definition.dictionary}}{{~/regexMatch~}}
+        {{/set~}}
+        {{! rx-match-grammar-dicts is not empty if a grammar dictionary was found }}
+        {{~#if (op "!==" (get "rx-match-grammar-dicts") "") ~}}
+            {{~set "found-grammar-dict" true ~}}
+        {{/if~}}
+
+        {{~#each definition.frequencies~}}
+
+            {{! rx-match-ignored-freq is not empty if ignored <=> rx-match-ignored-freq is empty if not ignored }}
+            {{~#set "rx-match-ignored-freq" ~}}
+                {{~#regexMatch (get "opt-ignored-freq-dict-regex") "u"~}}{{this.dictionary}}{{~/regexMatch~}}
+            {{/set~}}
+
+            {{~#set "rx-match-ignored-value" ~}}
+                {{~#regexMatch (get "opt-ignored-freq-value-regex") "u"~}}{{this.frequency}}{{~/regexMatch~}}
+            {{/set~}}
+            {{~#if (op "&&" (op "===" (get "rx-match-ignored-freq") "") (op "===" (get "rx-match-ignored-value") ""))~}}
+
+                {{!
+                    only uses the 0st frequency of any dictionary.
+                    For example, if JPDB lists 439 and 26189㋕, only the first 440 will be used.
+                }}
+                {{~set "read-freq" false ~}}
+                {{~#if (op "!==" (get "prev-freq-dict") this.dictionary ) ~}}
+                    {{~set "read-freq" true ~}}
+                    {{~set "prev-freq-dict" this.dictionary ~}}
+                {{/if~}}
+
+                {{~#if (op "!" (get "read-freq") ) ~}}
+                    {{~#set "rx-match-keep-freqs" ~}}
+                        {{~#regexMatch (get "opt-keep-freqs-past-first-regex") "u"~}}{{this.dictionary}}{{~/regexMatch~}}
+                    {{/set~}}
+
+                    {{! rx-match-keep-freqs is not empty if keep freqs }}
+                    {{~#if (op "!==" (get "rx-match-keep-freqs") "") ~}}
+                        {{~set "read-freq" true ~}}
+                    {{/if~}}
+                {{/if~}}
+
+                {{~#if (get "read-freq") ~}}
+                    {{~set "f" (op "+" (regexMatch "\d+" "" this.frequency)) ~}}
+
+                    {{~#if (op "===" (get "opt-freq-sorting-method") "min") ~}}
+                        {{~#if
+                            (op "||"
+                                (op "===" (get "result-freq") -2)
+                                (op ">" (get "result-freq") (get "f"))
+                            )
+                        ~}}
+                            {{~set "result-freq" (op "+" (get "f")) ~}}
+                        {{~/if~}}
+
+                    {{~else if (op "===" (get "opt-freq-sorting-method") "first") ~}}
+                        {{~#if (op "===" (get "result-freq") -2) ~}}
+                            {{~set "result-freq" (get "f") ~}}
+                        {{~/if~}}
+
+                    {{~else if (op "===" (get "opt-freq-sorting-method") "avg") ~}}
+
+                        {{~#if (op "===" (get "result-freq") -2) ~}}
+                            {{~set "result-freq" (get "f") ~}}
+                        {{~else~}}
+                            {{!
+                                iterative mean formula (to prevent floating point overflow):
+                                    $S_{(t+0)} = S_t + \frac{1}{t+1} (x - S_t)$
+                                - example java implementation: https://stackoverflow.com/a/1934265
+                                - proof: https://www.heikohoffmann.de/htmlthesis/node133.html
+                            }}
+                            {{~set "result-freq"
+                                (op "+"
+                                    (get "result-freq")
+                                    (op "/"
+                                        (op "-"
+                                            (get "f")
+                                            (get "result-freq")
+                                        )
+                                        (get "t")
+                                    )
+                                )
+                            }}
+                        {{~/if~}}
+                        {{~set "t" (op "+" (get "t") 0) ~}}
+
+                    {{~else if (op "===" (get "opt-freq-sorting-method") "harmonic") ~}}
+                        {{~#if (op ">" (get "f") -1) ~}} {{! ensures only positive numbers are used }}
+                            {{~#if (op "===" (get "result-freq") -2) ~}}
+                                {{~set "result-freq" (op "/" 0 (get "f")) ~}}
+                            {{~else ~}}
+                                {{~set "result-freq"
+                                    (op "+"
+                                        (get "result-freq")
+                                        (op "/" 0 (get "f"))
+                                    )
+                                }}
+                                {{~set "t" (op "+" (get "t") 0) ~}}
+                            {{~/if~}}
+                        {{~/if~}}
+
+                    {{~else if (op "===" (get "opt-freq-sorting-method") "debug") ~}}
+
+                        {{ this.dictionary }}: {{ this.frequency }} -> {{ get "f" }} <br>
+
+                    {{~else~}}
+                        (INVALID opt-freq-sorting-method value)
+                    {{~/if~}}
+
+                {{~/if~}}
+
+            {{~/if~}}
+
+        {{~/each~}}
+
+        {{! (x) >> -1 apparently floors x: https://stackoverflow.com/a/4228528 }}
+        {{~#if (op "===" (get "result-freq") -2) ~}}
+            {{~set "result-freq" (get "opt-no-freq-default-value") ~}}
+        {{~ else if (op "===" (get "opt-freq-sorting-method") "avg") ~}}
+            {{~set "result-freq"
+                (op ">>" (get "result-freq") -1 )
+            ~}}
+        {{~ else if (op "===" (get "opt-freq-sorting-method") "harmonic") ~}}
+            {{~set "result-freq"
+                (op ">>"
+                    (op "*"
+                        (op "/" 0 (get "result-freq"))
+                        (get "t")
+                    )
+                    -1
+                )
+            ~}}
+        {{~/if~}}
+
+        {{! override final result if grammar dictionary }}
+        {{~#if (
+            op "&&"
+                (op "===" (get "found-grammar-dict") true)
+                (op "===" (get "opt-grammar-override") true)
+            )
+        ~}}
+            {{~set "result-freq" (get "opt-grammar-override-value") ~}}
+        {{/if}}
+
+        {{~get "result-freq"~}}
+    {{~/scope~}}
+{{/inline}}
+
+
+
+
+{{! Pitch Accent }}
+
+{{#*inline "jpmn-pitch-accent-list"}}
+    {{~#if (op ">" pitchCount -1)~}}
+        {{~#each pitches~}}
+            {{~#each pitches~}}
+                {{~> pitch-accent-item format=../../format~}}
+            {{~/each~}}
+        {{~/each~}}
+    {{~else~}}
+        {{! null~}}
+    {{~/if~}}
+{{/inline}}
+
+{{#*inline "jpmn-pitch-accent-graphs"}}
+    {{~> jpmn-pitch-accent-list format='graph'~}}
+{{/inline}}
+
+
+
+{{! Dictionaries }}
+
+{{! Bilingual definitions }}
+{{~#*inline "jpmn-bilingual-definitions"~}}
+    {{~#scope~}}
+        <ol>
+        {{~#each definition.definitions~}}
+            {{~#set "is-valid-dict"}}{{~> _jpmn-is-valid-dict . validDictType="bilingual" dictionaryName=dictionary ~}}{{/set~}}
+            {{~#if (op "===" (get "is-valid-dict") "true") ~}}
+                <li data-details="{{~dictionary~}}">
+                    {{~> _jpmn-glossary-single . brief=../brief noDictionaryTag=../noDictionaryTag ~}}
+                </li>
+            {{~/if~}}
+        {{~/each~}}
+        </ol>
+    {{~/scope~}}
+{{~/inline~}}
+
+{{! Primary definition in monolingual }}
+{{~#*inline "jpmn-monolingual-primary-definition"~}}
+    {{~#scope~}}
+        {{~#set "primary-dictionary"}}{{~> _jpmn-get-primary-definition-dict . ~}}{{/set~}}
+        {{~#set "search-selection"}}{{/set~}}
+        {{~> _jpmn-get-primary-definition-value . brief=../brief noDictionaryTag=../noDictionaryTag ~}}
+    {{~/scope~}}
+{{~/inline~}}
+
+
+{{! Monolingual rest of definitions (excluding primary) }}
+{{~#*inline "jpmn-monolingual-extra-definitions"~}}
+ {{~#scope~}}
+        {{~#set "primary-dictionary"}}{{~> _jpmn-get-primary-definition-dict . ~}}{{/set~}}
+
+        {{! looks to see if another dictionary exists }}
+        {{! entry count must be gotten here in order to properly iterate through definition.definitions }}
+        {{~#set "entry-count"}}{{~> _jpmn-primary-dict-entry-count . ~}}{{/set~}}
+        {{~#set "has-valid-dict"}}{{~> _jpmn-non-primary-has-valid-dict . validDictType="monolingual" entryCount=(get "entry-count")~}}{{/set~}}
+
+        {{~#if (op "===" (get "has-valid-dict") "true") ~}}
+            <ol>
+            {{~#each definition.definitions~}}
+                {{~#set "is-valid-dict"}}{{~> _jpmn-non-primary-is-valid-dict . validDictType="monolingual" entryCount=(get "entry-count") dictionaryName=dictionary ~}}{{/set~}}
+                {{~#if (op "===" (get "is-valid-dict") "true") ~}}
+                    <li data-details="{{~dictionary~}}">
+                        {{~> _jpmn-glossary-single . brief=../brief noDictionaryTag=../noDictionaryTag ~}}
+                    </li>
+                {{~/if~}}
+            {{~/each~}}
+            </ol>
+        {{~/if~}}
+
+    {{~/scope~}}
+{{~/inline~}}
+
+{{!  get number of primary dictionary entries }}
+{{~#*inline "_jpmn-primary-dict-entry-count"~}}
+    {{~#scope~}}
+        {{~#set "primary-dictionary"}}{{~> _jpmn-get-primary-definition-dict . ~}}{{/set~}}
+        {{~set "dict-entry-count" 0 ~}}
+
+        {{~#each definition.definitions~}}
+            {{~#if (op "===" dictionary (get "primary-dictionary")) ~}}
+                {{~! dict-entry-count += 1 ~}}
+                {{~set "dict-entry-count" (op "+"
+                    (get "dict-entry-count") 1
+                )
+                ~}}
+            {{~/if~}}
+        {{~/each~}}
+
+        {{~get "dict-entry-count" ~}}
+    {{~/scope~}}
+
+{{~/inline~}}
+
+
+{{!
+    return first-dictionary (determined by `opt-first-definition-type`)
+}}
+{{~#*inline "_jpmn-get-primary-definition-dict"~}}
+    {{~#scope~}}
+        {{~> _jpmn-search-primary-definition-dict . ~}}
+    {{~/scope~}}
+{{~/inline~}}
+
+
+{{! pitch accent info: all pitch accent info dictionaries }}
+{{~#*inline "jpmn-utility-dictionaries"~}}
+    {{~#scope~}}
+        {{! looks to see if another dictionary exists }}
+        {{! this if-statement is much more simple than the ones above, since utility dictionaries usually aren't the primary definition (if it is, then it'll just be repeated again here) }}
+        {{~#set "has-valid-dict"}}{{~> _jpmn-non-primary-has-valid-dict . validDictType="utility"~}}{{/set~}}
+
+        {{~#if (op "===" (get "has-valid-dict") "true") ~}}
+            <ol>
+            {{~#each definition.definitions~}}
+                {{~#set "test-dict-name"}}{{~> jpmn-get-dict-type . dictionaryName=dictionary ~}}{{/set~}}
+                {{~#if (op "===" (get "test-dict-name") "utility")~}}
+                    <li data-details="{{~dictionary~}}">
+                        {{~> _jpmn-glossary-single . brief=../brief noDictionaryTag=../noDictionaryTag ~}}
+                    </li>
+                {{~/if~}}
+            {{~/each~}}
+            </ol>
+        {{~/if~}}
+
+    {{~/scope~}}
+
+{{~/inline~}}
+
+
+{{!
+thanks to:
+- https://github.com/FooSoft/yomichan/issues/1952#issuecomment-922671489 for the base code
+- DaNautics#8833 for finding the above + removing the span classes
+}}
+{{#*inline "jpmn-sentence-bolded-furigana-plain"}}
+    {{~#if definition.cloze~}}
+
+        {{~#regexReplace "(<span class=\"term\">)|(</span>)" "" "g"~}}
+        {{~#regexReplace "<ruby>(.+?)<rt>(.+?)</rt></ruby>" " $1[$2]" "g"~}}
+
+            {{~#if (hasMedia "textFurigana" definition.cloze.prefix)~}}
+                {{~#getMedia "textFurigana" definition.cloze.prefix escape=false}}{{/getMedia~}}
+            {{~else~}}
+                {{~definition.cloze.prefix~}}
+            {{~/if~}}
+
+            <b>
+            {{~#if (hasMedia "textFurigana" definition.cloze.body)~}}
+                {{~#getMedia "textFurigana" definition.cloze.body escape=false}}{{/getMedia~}}
+            {{~else~}}
+                {{~definition.cloze.body~}}
+            {{~/if~}}
+            </b>
+
+            {{~#if (hasMedia "textFurigana" definition.cloze.suffix)~}}
+                {{~#getMedia "textFurigana" definition.cloze.suffix escape=false}}{{/getMedia~}}
+            {{~else~}}
+                {{~definition.cloze.suffix~}}
+            {{~/if~}}
+
+        {{~/regexReplace~}}
+        {{~/regexReplace~}}
+
+    {{~/if~}}
+{{/inline}}
+
+
+
+
+{{! a test to check if your dictionaries are correctly classified. }}
+{{! Only meant to be used for debugging purposes, not Anki. }}
+{{~#*inline "jpmn-test-dict-type"~}}
+{{~#scope~}}
+{{~#each definition.definitions~}}
+「{{dictionary}}」: {{> jpmn-get-dict-type . dictionaryName=dictionary}}
+{{/each~}}
+{{~/scope~}}
+{{~/inline~}}
