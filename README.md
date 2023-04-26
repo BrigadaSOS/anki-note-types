@@ -8,7 +8,7 @@ Template for https://brigadasos.xyz/
 
 Dark | Light
 :---:|:---:
-![](/home/davafons/workplace/anki-note-types/BrigadaSOS-Japanese/preview/template-dark.png) | ![](/home/davafons/workplace/anki-note-types/BrigadaSOS-Japanese/preview/template-light.png)
+![](BrigadaSOS-Japanese/preview/template-dark.png) | ![](BrigadaSOS-Japanese/preview/template-light.png)
 
 ### Features
 * Can be configured as Monolingual/Bilingual
