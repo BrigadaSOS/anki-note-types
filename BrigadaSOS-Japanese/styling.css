@@ -1,6 +1,6 @@
 @charset "utf-8";
 /* --------------------   BrigadaSOS Note Type   --------------------- */
-/*                               v0.1.0                                */
+/*                               v0.1.1                                */
 /*          Inspired on Aquafina and Animecard Note Types              */
 /*          Requires Yomichan Handlebars.                              */
 /*          See https://github.com/davafons/anki-note-types            */
@@ -9,14 +9,14 @@
 /* -- General template configuration -- */
 .card {
   --info-container-height: 140px;
-  --link-color: #bfdbfe;
-  --text-color: #404040;
+  --link-color: #4f9dfc;
+  --text-color: #262626;
   --highlight-color: #8e72ca;
-  --muted-color: #cccccc;
-  --tag-color: #f2f2f2;
+  --muted-color: #a6a6a6;
+  --tag-color: #d9d9d9;
   --tag-background-color: #404040;
-  --tag-muted-background-color: #f2f2f2;
-  --background-variant-color: #f5f5f4;
+  --tag-muted-background-color: #f0f0f0;
+  --background-variant-color: #f0f0f0;
 
   color: var(--text-color);
   padding: 5px;
@@ -24,11 +24,15 @@
   text-align: center;
   font-size: 20px;
   max-width: 900px;
-  margin: auto;
+  margin: 0 auto;
+  padding: 0 10px;
   background-color: var(--background-color);
   font-family: "MS UI Gothic", "Noto Sans CJK JP", "ヒラギノ角ゴ Pro W3",
     "Hiragino Kaku Gothic Pro", Osaka, メイリオ, Meiryo, "ＭＳ Ｐゴシック",
     "MS PGothic", "ＭＳ ゴシック", "MS Gothic", TakaoPGothic, sans-serif;
+}
+.card::-webkit-scrollbar {
+  display: none;
 }
 
 .card.nightMode {
