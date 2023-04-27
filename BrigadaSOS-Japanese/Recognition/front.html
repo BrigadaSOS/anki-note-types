@@ -1,22 +1,48 @@
-<!-- --------------------   BrigadaSOS Note Type   --------------------- -->
-<!--                               v0.1.4                                -->
-<!--          Inspired on Aquafina and Animecard Note Types              -->
-<!--          Requires Yomichan Handlebars.                              -->
-<!--          See https://github.com/davafons/anki-note-types            -->
-<!-- ------------------------------------------------------------------- -->
+<!-- ---------------------   BrigadaSOS Note Type   ----------------------- -->
+<!--                               v1.0.0                                   -->
+<!--      Más información: https://github.com/davafons/anki-note-types      -->
+<!-- ---------------------------------------------------------------------- -->
 
-<!-- Template options -->
+<!-- Opciones de la plantilla. Puede cambiarla para ajustar qué información -->
+<!-- y cómo se muestra en la tarjeta.                                       -->
 <script>
-  // Change color of the vocab field depending on Pitch Accent (true/false)
+  // ===== Opciones =====
+
+  // Cambia el color de la tarjeta dependiendo del Pitch Accent
+  // > Valores aceptados: true / false
   var pitchAccentColoring = true;
 
-  // Show monolingual definition first (true/false)
+  // Muestra primero la definición monolingue
+  // > Valores aceptados: true / false
   var showMonolingualDefinitionFirst = false;
 
-  // Show the second definition automatically after X seconds (-1 disables the option)
-  var showSecondDefinitionDelay = -1;
-</script>
+  // Oculta el resto de definiciones y deja solo la principal
+  // > Valores aceptados: true / false
+  var hideNonPrimaryDefinitions = false;
 
+  // Muestra automáticamente la segunda definición después de X segundos
+  // > Valores aceptados:
+  //    * número (en segundos) mayor que 0
+  //    * -1 desactiva la opción
+  var showSecondDefinitionDelay = -1;
+
+  // ===== Colores =====
+
+  // Personaliza los colores de la plantilla
+  // Puedes usar esta página para ver el color correspondiente a cada código
+  // https://www.w3schools.com/colors/colors_picker.asp
+  var highlightColor = "#649ed8"; // Azul pálido
+  var heibanColor    = "#2e81b8"; // Azul
+  var atamadakaColor = "#b8502e"; // Rojo
+  var nakadakaColor  = "#b8732e"; // Naranja
+  var odakaColor     = "#2eb867"; // Verde
+</script>
+<!-- FIN -->
+
+<!-- ATENCION: Modificar el contenido mostrado debajo de esta advertencia   -->
+<!-- puede hacer que la tarjeta deje de funcionar correctamente. Considere  -->
+<!-- solo hacer cambios si tiene nociones de programación y entiende lo que -->
+<!-- está haciendo.                                                         -->
 <div id="front">
   <div id="tags_list" class="tags-list hidden"></div>
   <div id="vocab_field" class="vocab-field" lang="ja">
@@ -39,7 +65,7 @@
   // Paints the vocab word according to its Pitch Accent number.
   function markPitchOfVocab() {
     // Reset to standard color
-    changeHighlightColor("#649ed8");
+    changeHighlightColor(highlightColor);
     if (!pitchAccentColoring) return;
 
     let pitchNumber = `{{VocabPitchNum}}`.trim();
@@ -49,20 +75,20 @@
 
     switch (Number(pitchNumber)) {
       case 0:
-        // Heiban (blue)
-        changeHighlightColor("#2e81b8");
+        // Heiban
+        changeHighlightColor(heibanColor);
         break;
       case 1:
-        // Atamadaka (red)
-        changeHighlightColor("#b8502e");
+        // Atamadaka
+        changeHighlightColor(atamadakaColor);
         break;
       default:
         if (odaka(pitchNumber)) {
-          // Odaka (orange)
-          changeHighlightColor("#2eb867");
+          // Odaka
+          changeHighlightColor(odakaColor);
         } else {
-          // Odaka (green)
-          changeHighlightColor("#b8732e");
+          // Nakadaka
+          changeHighlightColor(nakadakaColor);
         }
         break;
     }

@@ -1,10 +1,13 @@
 @charset "utf-8";
-/* --------------------   BrigadaSOS Note Type   --------------------- */
-/*                               v0.1.4                                */
-/*          Inspired on Aquafina and Animecard Note Types              */
-/*          Requires Yomichan Handlebars.                              */
-/*          See https://github.com/davafons/anki-note-types            */
-/* ------------------------------------------------------------------- */
+/* ---------------------   BrigadaSOS Note Type   ----------------------- */
+/*                               v1.0.0                                   */
+/*      Más información: https://github.com/davafons/anki-note-types      */
+/* ---------------------------------------------------------------------- */
+
+/* ATENCION: Modificar el contenido mostrado debajo de esta advertencia   */
+/* puede hacer que la tarjeta deje de funcionar correctamente. Considere  */
+/* solo hacer cambios si tiene nociones de programación y entiende lo que */
+/* está haciendo.                                                         */
 
 /* -- General template configuration -- */
 

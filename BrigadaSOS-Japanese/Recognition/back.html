@@ -1,14 +1,15 @@
-<!-- --------------------   BrigadaSOS Note Type   --------------------- -->
-<!--                               v0.1.4                                -->
-<!--          Inspired on Aquafina and Animecard Note Types              -->
-<!--          Requires Yomichan Handlebars.                              -->
-<!--          See https://github.com/davafons/anki-note-types            -->
-<!-- ------------------------------------------------------------------- -->
+<!-- ---------------------   BrigadaSOS Note Type   ----------------------- -->
+<!--                               v1.0.0                                   -->
+<!--      Más información: https://github.com/davafons/anki-note-types      -->
+<!-- ---------------------------------------------------------------------- -->
+
+<!-- ATENCION: Modificar el contenido mostrado debajo de esta advertencia   -->
+<!-- puede hacer que la tarjeta deje de funcionar correctamente. Considere  -->
+<!-- solo hacer cambios si tiene nociones de programación y entiende lo que -->
+<!-- está haciendo.                                                         -->
 
 <div id="front_on_back">{{FrontSide}}</div>
-
 <hr />
-
 <div id="back">
   <div class="info-container">
     <div class="info-container-left">
@@ -28,11 +29,11 @@
         <div class="audio-tags-container">
           <!-- Show VocabAudio if field is not empty -->
           {{#VocabAudio}}
-          <span class="tag">Word: {{VocabAudio}}</span>
+          <span class="tag">Palabra: {{VocabAudio}}</span>
           {{/VocabAudio}}
           <!-- Show SentenceAudio if field is not empty -->
           {{#SentenceAudio}}
-          <span class="tag">Sentence: {{SentenceAudio}}</span>
+          <span class="tag">Frase: {{SentenceAudio}}</span>
           {{/SentenceAudio}}
         </div>
 
@@ -49,8 +50,8 @@
           >
           <a
             href="https://www.google.co.jp/search?q={{text:Vocab}}&tbm=isch"
-            title="Search images"
-            >Images</a
+            title="Imágenes"
+            >Imágenes</a
           >
         </div>
       </div>
@@ -65,7 +66,7 @@
   <!-- Show Bilingual definition if field is not empty -->
   {{#Bilingual}}
   <details id="bilingual_definition" class="definition definition-details">
-    <summary class="definition-title">Bilingual</summary>
+    <summary class="definition-title">Bilingue</summary>
     <blockquote class="definition-blockquote">
       <div class="definition-text">{{Bilingual}}</div>
     </blockquote>
@@ -78,7 +79,7 @@
     id="monolingual_primary_definition"
     class="definition definition-details"
   >
-    <summary class="definition-title">Monolingual</summary>
+    <summary class="definition-title">Monolingue</summary>
     <blockquote class="definition-blockquote">
       <div class="definition-text">
         <!-- Try field with furigana-->
@@ -98,7 +99,7 @@
     id="monolingual_extra_definition"
     class="definition definition-details"
   >
-    <summary class="definition-title">Extra definitions</summary>
+    <summary class="definition-title">Definiciones extra</summary>
     <blockquote class="definition-blockquote">
       <div class="definition-text">
         <!-- Try field with furigana-->
@@ -115,7 +116,7 @@
   <!-- Show Notes if field is not empty -->
   {{#Notes}}
   <details id="notes" class="notes definition-details">
-    <summary class="definition-title">Notes</summary>
+    <summary class="definition-title">Notas</summary>
     <blockquote class="definition-blockquote">
       <div class="definition-text">{{Notes}}</div>
     </blockquote>
@@ -148,6 +149,18 @@
     }
   }
 
+  function toggleNonPrimaryDefinitions() {
+    var definitions = document.getElementsByClassName("definition");
+    for (var i = 1; i < definitions.length; ++i) {
+      var classes = definitions[i].classList;
+      if (hideNonPrimaryDefinitions) {
+        classes.add("noDisplay");
+      } else {
+        classes.remove("noDisplay");
+      }
+    }
+  }
+
   function displayTags() {
     document.getElementById("tags_list").classList.remove("hidden");
   }
@@ -160,14 +173,20 @@
   }
 
   // ===== EXECUTION =====
+  // Automatically trigger the hint to display the sentence
   displayHintedSentence();
+  // Show hidden tags
   displayTags();
+
   // Swap first and second definitions if monolingualFirst is enabled
   if (showMonolingualDefinitionFirst) {
     swapDefinitions();
   }
   // Always make sure first definition is open
   openDefinition(0);
+
+  // Show or Hide extra definitions if enabled
+  toggleNonPrimaryDefinitions();
 
   if (typeof timeoutId !== "undefined") {
     clearTimeout(timeoutId);
