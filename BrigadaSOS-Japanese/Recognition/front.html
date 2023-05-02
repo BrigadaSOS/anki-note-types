@@ -1,5 +1,5 @@
 <!-- ---------------------   BrigadaSOS Note Type   ----------------------- -->
-<!--                               v1.0.1                                   -->
+<!--                               v1.0.2                                   -->
 <!--      Más información: https://github.com/davafons/anki-note-types      -->
 <!-- ---------------------------------------------------------------------- -->
 
@@ -159,7 +159,10 @@
   }
 
   function changeSentenceHintName() {
-    document.querySelector("#sentence_field .hint").text = "Sentence";
+    var sentenceHint = document.querySelector("#sentence_field .hint");
+    if (sentenceHint !== null && sentenceHint !== undefined) {
+      sentenceHint.text = "Sentence";
+    }
   }
 
   // ===== EXECUTION =====
