@@ -1,5 +1,5 @@
 {{! --------------------   BrigadaSOS handlebars   --------------------- }}
-{{!                               v1.0.2                                 }}
+{{!                               v1.0.3                                 }}
 {{!                                                                      }}
 {{!    Based on the code from jp-mining-note handlebars, MIT license     }}
 {{!    See https://aquafina-water-bottle.github.io/jp-mining-note/       }}
@@ -407,7 +407,6 @@
         {{~else if (op "!==" (get "rx-match-utility") "")~}}
             utility
         {{~else~}}
-            {{! assumed that anything else is a monolingual dictionary }}
             monolingual
         {{~/if~}}
 
@@ -510,18 +509,6 @@ is a part of a dictionary) }}
                 {{~/if~}}
             {{~/if~}}
         {{~/each~}}
-
-        {{! uses other dictionary type, last resort }}
-        {{~#if (op "===" (get "first-dictionary") null)~}}
-            {{~#each definition.definitions~}}
-                {{~#set "test-dict-name"}}{{~> jpmn-get-dict-type . dictionaryName=dictionary ~}}{{/set~}}
-                {{~#if (op "===" (get "test-dict-name") (get "first-definition-search-type-2"))~}}
-                    {{~#if (op "===" null (get "first-dictionary"))~}}
-                        {{~#set "first-dictionary" dictionary~}}{{~/set~}}
-                    {{~/if~}}
-                {{~/if~}}
-            {{~/each~}}
-        {{~/if~}}
 
         {{~#get "first-dictionary"~}}{{~/get~}}
     {{~/scope~}}
@@ -1052,7 +1039,7 @@ is a part of a dictionary) }}
 
 
 {{!
-    return first-dictionary (determined by `opt-first-definition-type`)
+    return first-dictionary monolingual
 }}
 {{~#*inline "_jpmn-get-primary-definition-dict"~}}
     {{~#scope~}}
