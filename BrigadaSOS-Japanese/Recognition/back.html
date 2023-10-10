@@ -1,6 +1,6 @@
 <!-- ---------------------   BrigadaSOS Note Type   ----------------------- -->
-<!--                               v1.0.2                                   -->
-<!--      Más información: https://github.com/davafons/anki-note-types      -->
+<!--                               v1.1.0                                   -->
+<!--    Más información: https://github.com/brigadasos/anki-note-types      -->
 <!-- ---------------------------------------------------------------------- -->
 
 <!-- ATENCION: Modificar el contenido mostrado debajo de esta advertencia   -->
@@ -44,9 +44,9 @@
             >Jisho</a
           >
           <a
-            href="https://www.immersionkit.com/dictionary?keyword={{text:Vocab}}"
-            title="Immersion Kit"
-            >IK</a
+            href="https://db.brigadasos.xyz/search/sentences?query={{text:Vocab}}"
+            title="NadeDB"
+            >NadeDB</a
           >
           <a
             href="https://en.wiktionary.org/wiki/{{text:Vocab}}#Japanese"
@@ -177,8 +177,18 @@
     }
   }
 
+  function revertToAnimecard() {
+    console.log("revert");
+    document.getElementById("vocab_field").className = "vocab-field";
+    document.getElementById("sentence_field").className = "sentence-field";
+    document.getElementById("sentence_card").className = "noDisplay";
+  }
+
   // ===== EXECUTION =====
   // Automatically trigger the hint to display the sentence
+  if (sentenceCard) {
+    revertToAnimecard();
+  }
   displayHintedSentence();
   // Show hidden tags
   displayTags();

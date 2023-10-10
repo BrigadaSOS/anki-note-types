@@ -1,7 +1,7 @@
 @charset "utf-8";
 /* ---------------------   BrigadaSOS Note Type   ----------------------- */
-/*                               v1.0.2                                   */
-/*      Más información: https://github.com/davafons/anki-note-types      */
+/*                               v1.1.0                                   */
+/*    Más información: https://github.com/brigadasos/anki-note-types      */
 /* ---------------------------------------------------------------------- */
 
 /* ATENCION: Modificar el contenido mostrado debajo de esta advertencia   */
@@ -268,6 +268,10 @@ details[open] .definition-title {
   transition: transform 0.2s;
   /* Animation */
   transform: scale(1.6);
+}
+
+.big-text {
+  font-size: 200%;
 }
 
 @keyframes sweep {

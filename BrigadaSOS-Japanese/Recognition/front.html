@@ -1,6 +1,6 @@
 <!-- ---------------------   BrigadaSOS Note Type   ----------------------- -->
-<!--                               v1.0.2                                   -->
-<!--      Más información: https://github.com/davafons/anki-note-types      -->
+<!--                               v1.1.0                                   -->
+<!--    Más información: https://github.com/brigadasos/anki-note-types      -->
 <!-- ---------------------------------------------------------------------- -->
 
 <!-- Opciones de la plantilla. Puede cambiarla para ajustar qué información -->
@@ -11,6 +11,9 @@
   // Cambia el color de la tarjeta dependiendo del Pitch Accent
   // > Valores aceptados: true / false
   var pitchAccentColoring = true;
+
+  // Cambia la tarjeta de animecard (solo palabra) a sentence card (solo frase)
+  var sentenceCard = false;
 
   // Muestra primero la definición monolingue
   // > Valores aceptados: true / false
@@ -45,6 +48,14 @@
 <!-- está haciendo.                                                         -->
 <div id="front">
   <div id="tags_list" class="tags-list hidden"></div>
+
+  <!-- Only visible when sentenceCard = true -->
+  {{#Sentence}}
+  <div id="sentence_card" class="sentence-field noDisplay big-text" lang="ja">
+    {{Sentence}}
+  </div>
+  {{/Sentence}}
+
   <div id="vocab_field" class="vocab-field" lang="ja">
     <!-- Try field with furigana-->
     {{#VocabFurigana}}{{furigana::VocabFurigana}}{{/VocabFurigana}}
@@ -158,6 +169,13 @@
     }
   }
 
+  function changeCardType() {
+    document.getElementById("vocab_field").className = "noDisplay";
+    document.getElementById("sentence_field").className = "noDisplay";
+    document.getElementById("sentence_card").className =
+      "sentence-field big-text";
+  }
+
   function changeSentenceHintName() {
     var sentenceHint = document.querySelector("#sentence_field .hint");
     if (sentenceHint !== null && sentenceHint !== undefined) {
@@ -166,14 +184,24 @@
   }
 
   // ===== EXECUTION =====
-  function execution() {
+  function executionFront() {
+    var backside = document.getElementById("back");
+    if (backside !== null && backside !== undefined) {
+      return;
+    }
+
+    if (sentenceCard) {
+      changeCardType();
+    }
     markPitchOfVocab();
     addTagsToDiv();
     changeSentenceHintName();
   }
 
   $(document).ready(function () {
-    execution();
+    executionFront();
   });
-  execution();
+
+  // This is (probably) for compatibility with android & ios
+  executionFront();
 </script>
