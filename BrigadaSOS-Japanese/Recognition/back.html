@@ -141,47 +141,47 @@
       parent.insertBefore(node1, afterNode2);
     }
     swap(
-      document.getElementById("bilingual_definition"),
-      document.getElementById("monolingual_primary_definition")
+      document.getElementById('bilingual_definition'),
+      document.getElementById('monolingual_primary_definition')
     );
   }
 
   // Makes sure the first definition is always open by default
   function openDefinition(n) {
-    var definitions = document.getElementsByClassName("definition");
+    var definitions = document.getElementsByClassName('definition');
     if (n < definitions.length) {
       definitions[n].open = true;
     }
   }
 
   function toggleNonPrimaryDefinitions() {
-    var definitions = document.getElementsByClassName("definition");
+    var definitions = document.getElementsByClassName('definition');
     for (var i = 1; i < definitions.length; ++i) {
       var classes = definitions[i].classList;
       if (hideNonPrimaryDefinitions) {
-        classes.add("noDisplay");
+        classes.add('noDisplay');
       } else {
-        classes.remove("noDisplay");
+        classes.remove('noDisplay');
       }
     }
   }
 
   function displayTags() {
-    document.getElementById("tags_list").classList.remove("hidden");
+    document.getElementById('tags_list').classList.remove('hidden');
   }
 
   function displayHintedSentence() {
-    var sentenceHint = document.querySelector("#sentence_field .hint");
+    var sentenceHint = document.querySelector('#sentence_field .hint');
     if (sentenceHint !== null && sentenceHint !== undefined) {
       sentenceHint.click();
     }
   }
 
   function revertToAnimecard() {
-    console.log("revert");
-    document.getElementById("vocab_field").className = "vocab-field";
-    document.getElementById("sentence_field").className = "sentence-field";
-    document.getElementById("sentence_card").className = "noDisplay";
+    console.log('revert');
+    document.getElementById('vocab_field').className = 'vocab-field';
+    document.getElementById('sentence_field').className = 'sentence-field';
+    document.getElementById('sentence_card').className = 'noDisplay';
   }
 
   // ===== EXECUTION =====
@@ -203,7 +203,7 @@
   // Show or Hide extra definitions if enabled
   toggleNonPrimaryDefinitions();
 
-  if (typeof timeoutId !== "undefined") {
+  if (typeof timeoutId !== 'undefined') {
     clearTimeout(timeoutId);
   }
   if (showSecondDefinitionDelay >= 0) {
