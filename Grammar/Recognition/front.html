@@ -35,6 +35,15 @@
     setTimeout(applyFurigana, 1000);
 
     (function () {
+      if("{{id}}" !== localStorage.getItem("card_id")) { // We are displaying back side
+        localStorage.removeItem('card_id');
+        localStorage.removeItem('randomFactor');
+      }
+      localStorage.setItem("card_id", "{{id}}");
+
+      const randomFactor = localStorage.getItem('randomFactor') || Math.random();
+      localStorage.setItem('randomFactor', randomFactor);
+
       const amountExamples = 3;
 
       const container = document.getElementById('random-examples-container');
@@ -44,7 +53,7 @@
 
       function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
+          const j = Math.floor(randomFactor * (i + 1));
           [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
