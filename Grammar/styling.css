@@ -20,7 +20,7 @@ html {
   -webkit-box-align: stretch;
   -webkit-box-pack: center;
   -webkit-box-orient: vertical;
-  margin: 0 auto;
+  margin: 0 5%;
   padding: 0;
   text-align: center;
   font-size: 1rem;
@@ -45,11 +45,16 @@ html {
 
 .translation:hover {
   filter: none;
+  opacity: 0.8;
 }
 .translation {
   margin-top: 10px;
   filter: blur(8px);
   font-weight: 200;
+  opacity: 0.3;
+}
+.hidden {
+  display: none;
 }
 
 /* Warning Section */
@@ -86,15 +91,16 @@ html {
   color: white;
   font-weight: bold;
   border-radius: 10px;
-  padding: 0.3em 0;
+  padding: 0.8em 0;
 }
 
 .example {
   font-size: 1.5rem;
   position: relative;
   padding: 1em 2em;
-  margin: 1% 3% 1% 3%;
-  border-radius: 0.3em;
+  margin: 2% 0%;
+  border-radius: 10px;
+
   background-color: #12121b;
 }
 
@@ -104,9 +110,9 @@ html {
 }
 
 #usage {
-  padding: 3% 2%;
-  margin: 3% 5%;
-  border-radius: 15px;
+  padding: 3% 4%;
+  margin: 3% 0;
+  border-radius: 10px;
   color: #fff;
   background-color: #12121b;
   font-size: 1.2rem;

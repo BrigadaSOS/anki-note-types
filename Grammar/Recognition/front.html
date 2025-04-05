@@ -35,6 +35,8 @@
     setTimeout(applyFurigana, 1000);
 
     (function () {
+      const isFront = document.getElementById('answer') === null;
+
       if ('{{id}}' !== localStorage.getItem('card_id')) {
         // We are displaying back side
         localStorage.removeItem('card_id');
@@ -68,18 +70,30 @@
         selected.forEach((example) => {
           const clone = example.cloneNode(true);
           clone.classList.add('example');
+
           container.appendChild(clone);
+        });
+      }
+
+      if (isFront) {
+        document.querySelectorAll('.translation').forEach((element) => {
+          const furiganaRegex = /（[^）]*）/g;
+
+          element.classList.add('hidden');
         });
       }
 
       const backSideExamples = document.getElementById(
         'all-examples-container'
       );
-      allExamples.forEach((example) => {
-        const clone = example.cloneNode(true);
-        clone.classList.add('example');
-        backSideExamples.appendChild(clone);
-      });
+      if (backSideExamples !== null) {
+        document.getElementById('all-examples-container');
+        allExamples.forEach((example) => {
+          const clone = example.cloneNode(true);
+          clone.classList.add('example');
+          backSideExamples.appendChild(clone);
+        });
+      }
 
       document.querySelectorAll('.japanese').forEach((element) => {
         const furiganaRegex = /（[^）]*）/g;
