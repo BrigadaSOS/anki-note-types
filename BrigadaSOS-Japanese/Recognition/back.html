@@ -185,10 +185,23 @@
   }
 
   // ===== EXECUTION =====
+  // Get stored pitch color from front template
+  function getStoredPitchColor() {
+    try {
+      const color = localStorage.getItem('ankiPitchColor');
+      if (color) {
+        document.querySelector('.card').style.setProperty('--highlight-color', color);
+      }
+    } catch(e) {
+      console.log('Could not retrieve pitch color:', e);
+    }
+  }
+
   // Automatically trigger the hint to display the sentence
   if (sentenceCard) {
     revertToAnimecard();
   }
+  getStoredPitchColor();
   displayHintedSentence();
   // Show hidden tags
   displayTags();

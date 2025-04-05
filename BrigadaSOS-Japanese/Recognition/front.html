@@ -114,6 +114,8 @@
       r.style !== undefined
     ) {
       r.style.setProperty('--highlight-color', color);
+      // Store color for back template
+      pycmd('pitchColor:' + color);
     }
   }
 
