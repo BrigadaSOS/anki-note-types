@@ -190,9 +190,11 @@
     try {
       const color = localStorage.getItem('ankiPitchColor');
       if (color) {
-        document.querySelector('.card').style.setProperty('--highlight-color', color);
+        document
+          .querySelector('.card')
+          .style.setProperty('--highlight-color', color);
       }
-    } catch(e) {
+    } catch (e) {
       console.log('Could not retrieve pitch color:', e);
     }
   }
