@@ -1,0 +1,223 @@
+// Furigana style
+
+
+// Basic style
+
+/* General style */
+@font-face {
+    src: url('_kosugiMaru-Regular.ttf'); 
+    font-family: 'Kosugi Maru';
+}
+
+html { height: 100%; }
+.card {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-pack: center;
+    -webkit-box-orient: vertical;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* JLPT Section */
+.jlpt-level {
+    background: #B13F1C;
+    font-size: 1.2rem;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: inline-block;
+}
+.jlpt-level strong {
+    font-weight: 700;
+    display: block;
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+}
+
+/* Translation Section */
+
+.translation:hover {
+    filter:none;
+}
+.translation {
+    margin-top: 10px;
+    filter:blur(8px);
+    font-weight: 200;
+}
+
+
+/* Warning Section */
+.warning-box::before {
+    content: "⚠";
+    color: rgba(251, 156, 4, 0.8);
+    left: 0.5rem;
+    font-size: 1.6rem;
+    opacity: 0.6;
+}
+
+.warning-box {
+    padding: 0.5em;
+    background-color: rgba(251,156,4,0.1);
+    border-left: 4px solid rgba(251,156,4,0.8);
+    margin-top: 1em;
+    border-radius: 4px;
+    font-size: 1.1rem;
+}
+
+
+
+
+
+
+
+
+
+.night-mode .card {
+    background-color: #000003;
+}
+
+.definition {
+    font-size: 1.2rem;
+}
+
+
+#concept {
+    width: 90%;
+    margin: 1em auto 0em;
+    font-size: 2rem;
+    background-color: #B13F1C;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 0.3em 0;
+}
+
+.example {
+    font-size: 1.5rem;
+    position: relative;
+    padding: 1em 2em;
+    margin: 1% 3% 1% 3%;
+    border-radius: .3em;
+    background-color: #12121b;
+}
+
+.example .example_jp {
+    font-size: 1.4rem;
+    color: #346;
+}
+
+#usage {
+    padding: 3% 2%;
+    margin: 3% 5%;
+    border-radius: 15px;
+    color: #fff;
+    background-color: #12121b;
+    font-size: 1.2rem;
+
+}
+
+#answer {
+    position: relative;
+    top: -1em;
+}
+
+/* Ajustes para móviles */
+@media screen and (orientation: portrait) {
+    .mobile #content { margin: 0; }
+    .mobile .example {
+        font-size: 1rem;
+        margin: 1% 0.5%;
+    }
+}
+
+.blank {
+    color: var(--primary-accent);
+    font-weight: 600;
+}
+
+.example_grammarpoint_highlight{
+    color: var(--primary-accent);
+    font-weight: 600;
+}
+
+/* Variables de temas dinámicos */
+:root {
+    --primary-accent: #c74a4a;
+    --secondary-accent: #3498db;
+    --warning-accent: #fb9c04;
+    --success-accent: #afcc71;
+    --text-primary: inherit;
+    --border-opacity: 0.2;
+    --element-spacing: 1rem;
+    --border-radius: 6px;
+}
+
+
+
+
+li[data-study-question] {
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: var(--element-spacing);
+    margin-bottom: var(--element-spacing);
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    text-align: center;
+    list-style-type: none;
+
+}
+
+.title {
+    color: var(--primary-accent);
+    font-size: 2rem;
+    margin: 1.5rem 0;
+}
+
+.meaning {
+    font-size: 1.4rem;
+    opacity: 0.9;
+}
+
+@media (prefers-color-scheme: dark) {
+    .warning-box::before,
+    .structure-polite::before {
+        opacity: 0.4;
+    }
+    
+    li[data-study-question] {
+        border-color: rgba(255,255,255,0.1);
+    }
+}
+
+@media (min-width: 768px) {
+    .card {
+        max-width: 85vw;
+        font-size: 1.1rem;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    .definition {
+        font-size: 1rem;
+    }
+
+    .example {
+        font-size: 1.2rem; 
+    }
+
+    #concept {
+        font-size: 1.5rem; 
+    }
+
+    .title {
+        font-size: 1.8rem; 
+    }
+
+    .meaning {
+        font-size: 1.2rem;
+    }
+}
