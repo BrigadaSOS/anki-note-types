@@ -34,11 +34,11 @@
   // Personaliza los colores de la plantilla
   // Puedes usar esta página para ver el color correspondiente a cada código
   // https://www.w3schools.com/colors/colors_picker.asp
-  var highlightColor = "#649ed8"; // Azul pálido
-  var heibanColor = "#2e81b8"; // Azul
-  var atamadakaColor = "#b8502e"; // Rojo
-  var nakadakaColor = "#b8732e"; // Naranja
-  var odakaColor = "#2eb867"; // Verde
+  var highlightColor = '#649ed8'; // Azul pálido
+  var heibanColor = '#2e81b8'; // Azul
+  var atamadakaColor = '#b8502e'; // Rojo
+  var nakadakaColor = '#b8732e'; // Naranja
+  var odakaColor = '#2eb867'; // Verde
 </script>
 <!-- FIN -->
 
@@ -80,9 +80,9 @@
     if (!pitchAccentColoring) return;
 
     let pitchNumber = `{{VocabPitchNum}}`.trim();
-    if (pitchNumber === null || pitchNumber === "") return;
+    if (pitchNumber === null || pitchNumber === '') return;
     pitchNumber = pitchNumber.match(/\d/)[0];
-    if (pitchNumber === null || pitchNumber === "") return;
+    if (pitchNumber === null || pitchNumber === '') return;
 
     switch (Number(pitchNumber)) {
       case 0:
@@ -106,14 +106,14 @@
   }
 
   function changeHighlightColor(color) {
-    var r = document.querySelector(".card");
+    var r = document.querySelector('.card');
     if (
       r !== null &&
       r !== undefined &&
       r.style !== null &&
       r.style !== undefined
     ) {
-      r.style.setProperty("--highlight-color", color);
+      r.style.setProperty('--highlight-color', color);
     }
   }
 
@@ -124,7 +124,7 @@
       return false;
     }
     // small っ is one mora; ゃゅょ are parts of single mora
-    const n_moras = vocab_kana.replace(/[ャュョゃゅょ]/g, "").length;
+    const n_moras = vocab_kana.replace(/[ャュョゃゅょ]/g, '').length;
     if (n_moras == pitch_num) {
       return true;
     } else {
@@ -134,58 +134,58 @@
 
   /* Splits tags into separate divs */
   function addTagsToDiv() {
-    const tagsList = document.getElementById("tags_list");
+    const tagsList = document.getElementById('tags_list');
 
     if (!tagsList) return;
-    tagsList.innerHTML = "";
+    tagsList.innerHTML = '';
 
     // First, add tags defined on the Tags field
-    const split = `{{Tags}}`.split(" ");
+    const split = `{{Tags}}`.split(' ');
     for (const tag of split) {
       if (tag.length < 1) continue;
-      const tag_elem = document.createElement("span");
-      tag_elem.className = "tag muted";
+      const tag_elem = document.createElement('span');
+      tag_elem.className = 'tag muted';
       tag_elem.innerHTML = tag;
       tagsList.appendChild(tag_elem);
     }
 
     // Now add new tags for each frequency defined on the Frequencies field
-    var template = document.createElement("template");
+    var template = document.createElement('template');
     template.innerHTML = `{{Frequencies}}`.trim();
     var frequencies = template.content;
-    var frequencyDicts = frequencies.querySelectorAll(".frequencies__group");
+    var frequencyDicts = frequencies.querySelectorAll('.frequencies__group');
 
     for (var freqDict of frequencyDicts) {
       var number = freqDict.querySelector(
-        ".frequencies__number-inner"
+        '.frequencies__number-inner'
       ).innerHTML;
       var name = freqDict.querySelector(
-        ".frequencies__dictionary-inner"
+        '.frequencies__dictionary-inner'
       ).innerHTML;
-      const tag_elem = document.createElement("span");
-      tag_elem.className = "tag muted";
+      const tag_elem = document.createElement('span');
+      tag_elem.className = 'tag muted';
       tag_elem.innerHTML = `${name}: ${number}`;
       tagsList.appendChild(tag_elem);
     }
   }
 
   function changeCardType() {
-    document.getElementById("vocab_field").className = "noDisplay";
-    document.getElementById("sentence_field").className = "noDisplay";
-    document.getElementById("sentence_card").className =
-      "sentence-field big-text";
+    document.getElementById('vocab_field').className = 'noDisplay';
+    document.getElementById('sentence_field').className = 'noDisplay';
+    document.getElementById('sentence_card').className =
+      'sentence-field big-text';
   }
 
   function changeSentenceHintName() {
-    var sentenceHint = document.querySelector("#sentence_field .hint");
+    var sentenceHint = document.querySelector('#sentence_field .hint');
     if (sentenceHint !== null && sentenceHint !== undefined) {
-      sentenceHint.text = "Sentence";
+      sentenceHint.text = 'Sentence';
     }
   }
 
   // ===== EXECUTION =====
   function executionFront() {
-    var backside = document.getElementById("back");
+    var backside = document.getElementById('back');
     if (backside !== null && backside !== undefined) {
       return;
     }

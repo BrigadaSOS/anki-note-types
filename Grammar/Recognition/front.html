@@ -1,0 +1,71 @@
+<html lang="ja">
+  {{#level}}
+  <p class="jlpt-level">
+    <strong>{{level}}レベル</strong>
+  </p>
+  {{/level}}
+
+  <div id="questionSide">
+    <div id="concept">{{title}}</div>
+    <br />
+    <div id="questionBox"></div>
+    <div class="examples-system">
+      <div class="random-examples">
+        <div id="random-examples-container"></div>
+      </div>
+      <div class="example-jp" style="display: none">{{examples}}</div>
+    </div>
+  </div>
+
+  <script>
+    function applyFurigana() {
+      const container = document.getElementById('answerBox');
+
+      if (container) {
+        container.innerHTML = container.innerHTML.replace(
+          /([\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF々]+)（([^）]+)）/g,
+          '<ruby>$1<rt>$2</rt></ruby>'
+        );
+      }
+    }
+
+    // In slow devices this is a must
+    setTimeout(applyFurigana, 50);
+    setTimeout(applyFurigana, 300);
+    setTimeout(applyFurigana, 1000);
+
+    (function () {
+      const amountExamples = 3;
+
+      const container = document.getElementById('random-examples-container');
+      const allExamples = Array.from(
+        document.querySelectorAll('.example-container')
+      );
+
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      if (allExamples.length > 0) {
+        const shuffled = shuffleArray(allExamples);
+        const selected = shuffled.slice(0, amountExamples);
+
+        selected.forEach((example) => {
+          const clone = example.cloneNode(true);
+          clone.classList.add('example');
+          container.appendChild(clone);
+        });
+      }
+
+      document.querySelectorAll('.japanese').forEach((element) => {
+        const furiganaRegex = /（[^）]*）/g;
+
+        element.innerHTML = element.innerHTML.replace(/（[^）]*）/g, ''); // Paréntesis japoneses （）
+      });
+    })();
+  </script>
+</html>

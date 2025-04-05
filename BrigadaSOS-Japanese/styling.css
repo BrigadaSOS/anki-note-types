@@ -39,9 +39,10 @@
   max-width: 900px;
   margin: 0 auto;
   background-color: var(--background-color);
-  font-family: "Noto Sans CJK JP", "ヒラギノ角ゴ Pro W3",
-    "Hiragino Kaku Gothic Pro", Osaka, メイリオ, Meiryo, "ＭＳ Ｐゴシック",
-    "MS PGothic", "ＭＳ ゴシック", "MS Gothic", TakaoPGothic, sans-serif;
+  font-family:
+    'Noto Sans CJK JP', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro',
+    Osaka, メイリオ, Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', 'ＭＳ ゴシック',
+    'MS Gothic', TakaoPGothic, sans-serif;
 }
 .card::-webkit-scrollbar {
   display: none;
@@ -218,10 +219,10 @@ hr {
 }
 
 .links-container a:after {
-  content: " | ";
+  content: ' | ';
 }
 .links-container a:last-child:after {
-  content: "";
+  content: '';
 }
 
 /* Definitions */
@@ -321,22 +322,22 @@ details[open] .definition-title {
   padding-left: 20px;
 }
 
-[data-details="JMDict Extra"i] [data-sc-content="glossary"i] {
+[data-details='JMDict Extra'i] [data-sc-content='glossary'i] {
   padding-left: 0;
 }
 
-[data-details="JMDict Extra"i] [data-sc-content="glossary"i] li {
+[data-details='JMDict Extra'i] [data-sc-content='glossary'i] li {
   display: inline;
 }
 
-[data-details="JMDict Extra"i] [data-sc-content="glossary"i] li:after {
-  content: " | ";
+[data-details='JMDict Extra'i] [data-sc-content='glossary'i] li:after {
+  content: ' | ';
 }
 
-[data-details="JMDict Extra"i]
-  [data-sc-content="glossary"i]
+[data-details='JMDict Extra'i]
+  [data-sc-content='glossary'i]
   li:last-child:after {
-  content: "";
+  content: '';
 }
 
 /* -- END Dictionaries definitions configuration -- */
